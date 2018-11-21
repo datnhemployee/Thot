@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-               BuildableName = "Thot-tvOS.app"
-               BlueprintName = "Thot-tvOS"
-               ReferencedContainer = "container:Thot.xcodeproj">
+               BuildableName = "thot-tvOS.app"
+               BlueprintName = "thot-tvOS"
+               ReferencedContainer = "container:thot.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "Thot-tvOSTests.xctest"
-               BlueprintName = "Thot-tvOSTests"
-               ReferencedContainer = "container:Thot.xcodeproj">
+               BuildableName = "thot-tvOSTests.xctest"
+               BlueprintName = "thot-tvOSTests"
+               ReferencedContainer = "container:thot.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -61,9 +61,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "Thot-tvOSTests.xctest"
-               BlueprintName = "Thot-tvOSTests"
-               ReferencedContainer = "container:Thot.xcodeproj">
+               BuildableName = "thot-tvOSTests.xctest"
+               BlueprintName = "thot-tvOSTests"
+               ReferencedContainer = "container:thot.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "Thot-tvOS.app"
-            BlueprintName = "Thot-tvOS"
-            ReferencedContainer = "container:Thot.xcodeproj">
+            BuildableName = "thot-tvOS.app"
+            BlueprintName = "thot-tvOS"
+            ReferencedContainer = "container:thot.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -94,9 +94,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "Thot-tvOS.app"
-            BlueprintName = "Thot-tvOS"
-            ReferencedContainer = "container:Thot.xcodeproj">
+            BuildableName = "thot-tvOS.app"
+            BlueprintName = "thot-tvOS"
+            ReferencedContainer = "container:thot.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -113,9 +113,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "Thot-tvOS.app"
-            BlueprintName = "Thot-tvOS"
-            ReferencedContainer = "container:Thot.xcodeproj">
+            BuildableName = "thot-tvOS.app"
+            BlueprintName = "thot-tvOS"
+            ReferencedContainer = "container:thot.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
