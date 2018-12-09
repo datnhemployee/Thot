@@ -1,5 +1,5 @@
 {
-  "name": "thottui",
+  "name": "thot",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -12,7 +12,12 @@
     "react": "16.6.1",
     "react-native": "0.57.5",
     "react-native-filesystem": "^0.1.0",
-    "react-native-popup-dialog": "^0.16.4"
+    "react-native-gesture-handler": "^1.0.10",
+    "react-native-popup-dialog": "^0.16.4",
+    "react-navigation": "^3.0.2",
+    "react-redux": "^5.1.1",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

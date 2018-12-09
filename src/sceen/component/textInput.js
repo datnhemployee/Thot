@@ -17,7 +17,7 @@ import {
   LIGHT_RED,
   LIGHT_GRAY,
   FONT,
-} from '../../../constant/style';
+} from '../../constant/style';
 
 export default class textInput extends Component {
   constructor () {
@@ -47,7 +47,7 @@ export default class textInput extends Component {
         placeholder={this.props.placeholder}
         placeholderTextColor= {LIGHT_GRAY}
         secureTextEntry={this.props.sercure}
-        onChangeText={this.props._onChangeText}
+        onChangeText={this.props.onChangeText}
         // editable = {true}
         maxLength = {40}
         autoFocus = {true}
