@@ -13,11 +13,15 @@ import {
   FONT,
 } from '../../constant/style';
 import {
+  DEFAULT_PIC
+} from '../../constant/picture'
+import {
   AsyncStorage,
   StyleSheet, 
   Text, 
   View, 
-  TouchableOpacity
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import {connect } from 'react-redux';
 import {
@@ -25,8 +29,11 @@ import {
   inputPassword,
   logInNoToken,
   logInWithToken,
+  getUserInfo,
+  logOut,
 } from '../../actions/actLogin';
 import FLogin from '../form/fLogin';
+import axios from 'axios';
 
 
 class login extends Component {
@@ -36,32 +43,50 @@ class login extends Component {
     this.usernameChange = this.usernameChange.bind(this);
     this.passwordChange = this.passwordChange.bind(this);
     this.formSubmitted = this.formSubmitted.bind(this);
-    // this.state = {
-    //   alert: {
-    //     content: String,
-    //     title: String,
-    //   }
-    // }
+    
   }
   async componentWillMount () {
+    let {
+      logInWithToken,
+    } = this.props;
+
+    // console.log(JSON.stringify(Connection.defUrl + Connection.defPath.logIn));
+    // let res = await axios.post( 
+    //   Connection.defUrl + Connection.defPath.logIn,{
+    //   },{
+    //     timeout: 3000,
+    //     auth: {
+    //       username: 'username',
+    //       password: 'password',
+    //     },
+    //     headers: {
+    //       request: 'log-in-with-auth',
+    //     },
+    // });
+    // console.log(JSON.stringify(res));
+
+    await logInWithToken ();
   }
 
   async componentWillReceiveProps (nextProps) {
-    // let {
-    //   logInWithToken,
-    //   logOut,
-    //   navigation,
-    // } = this.props;
+    let {
+      logOut,
+      getUserInfo,
+      navigation,
+    } = this.props;
 
-    // await logInWithToken ();
-    // let {
-    //   info
-    // } = nextProps;
-    // if(info){
-    //   navigation.navigate('Home');  
-    // } else {
-    //   logOut();
-    // }
+    let {
+      token
+    } = nextProps;
+    console.log('Nextprops: ' + JSON.stringify(nextProps));
+    if(token){
+      await getUserInfo(token);
+
+      // const {username} = this.props;
+      // if(username)
+      navigation.navigate('Home',{token});  
+      logOut();
+    } 
   }
 
 
@@ -70,9 +95,12 @@ class login extends Component {
       username,
       password,
       logInNoToken,
+      navigation
     } = this.props;
 
-    console.log('clicked: ' + username);
+    console.log('formSubmitted: ' + username);
+    navigation.navigate('Register');  
+
     await logInNoToken ({username,password});
   }
 
@@ -113,6 +141,7 @@ class login extends Component {
     // else navigate to login screen
     return (
         <View style={styles.container}>
+          
           <View style={styles.header}>
             <Text style={styles.label}> Thớt </Text>
           </View>
@@ -192,21 +221,15 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (
-  {
-  auth:{
-    username,
-    password,
-    errType,
-    info,
-  }
-}) => {
-  console.log('connect: ' + username);
+ state) => {
+  console.log('connect: ' + JSON.stringify(state));
 
   return {
-    username: username,
-    password: password,
-    errType: errType,
-    info: info,
+    token: state.auth.token,
+    username: state.auth.username,
+    password: state.auth.password,
+    errType: state.auth.errType,
+    info: state.auth.info,
   }
 }
 
@@ -215,7 +238,8 @@ const mapDispatchToProps = (dispatch) => ({
   passwordChange: (password) => dispatch(inputPassword(password)),
   logInNoToken: (auth) => dispatch(logInNoToken(auth)),
   logInWithToken: () => dispatch(logInWithToken()),
-  logOut: () => dispatch(LogOut()),
+  logOut: () => dispatch(logOut()),
+  getUserInfo: (token) => dispatch(getUserInfo(token))
 });
 
 export default connect(

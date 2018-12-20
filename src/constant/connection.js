@@ -30,7 +30,7 @@ class Connection {
 
   static get defPath () {
     return {
-      logIn: 'logIn',
+      logIn: 'LogIn',
     }
   }
 
@@ -53,7 +53,8 @@ class Connection {
     // Response
     
     // Request
-    reqToken: 'Request token',
+    reqToken: 'Request-token',
+    reqInfo: 'Request-user-info',
     }
   }
 

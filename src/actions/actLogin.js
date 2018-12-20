@@ -10,23 +10,19 @@ const logInNoToken = (
 ) => async (
   dispatch
 ) =>{
-  let {
+  try{
+    let {
     username, 
     password
-  } = auth;
-  console.log('here: ' + JSON.stringify(auth));
-  console.log('here: ' + username);
-  
-  try{
-  
-    let manager = new UserManager({username,password});
-    let token = await manager.getTokenFromDB();
-    console.log(token);
+    } = auth;
+    console.log('here: ' + JSON.stringify(auth));
+    console.log('here: ' + username);
+    let token = await UserManager.getTokenFromDB(
+      username,
+      password
+    );
+    console.log('token: '+ JSON.stringify(token));
     if(token.length != 0){
-
-      let localStore = LocalStorage.getInstance();
-      await localStore.setToken(token);
-
       dispatch({
         type: ActionType.LOGING_IN_NO_TOKEN,
         payload: token,
@@ -80,18 +76,19 @@ const logInNoToken = (
         payload: ErrorType.Server.LogIn,
         error: true,
       }); 
+      console.log(err);
   }
 }
 
 const logInWithToken = () => async (dispatch) =>{
   try{
-
-      if(token){
-        dispatch({
-          type: ActionType.LOGING_IN_WITH_TOKEN,
-          payload:token,
+    let token = await UserManager.getTokenFromLocal();
+    if(token){
+      dispatch({
+        type: ActionType.LOGING_IN_WITH_TOKEN,
+        payload:token,
       });
-     } else {
+    } else {
       await dispatch({
         type: ActionType.LOGING_IN_WITH_TOKEN,
         payload: ErrorType.Client.LogIn,
@@ -99,11 +96,11 @@ const logInWithToken = () => async (dispatch) =>{
       });
     }
   } catch (err) {
-      await dispatch({
-        type: ActionType.LOGING_IN_WITH_TOKEN,
-        payload:  ErrorType.Server.LogIn,
-        error: true,
-      }); 
+    await dispatch({
+      type: ActionType.LOGING_IN_WITH_TOKEN,
+      payload:  ErrorType.Server.LogIn,
+      error: true,
+    }); 
   }
 }
 
@@ -131,60 +128,35 @@ const inputPassword = (password) => inputLogInChange (
   ActionType.INPUT_PASSWORD_CHANGES,
   password);
 
-// const getUserInfo = (
-//   token = LocalStorage.getInstance().Token_DB,
-//   ) => async (dispatch) => {
-//   try{
-//     let header = Connection.defHeader.reqInfo;
-//     if(token){
-//       let res = await axios.post( 
-//         url,{},{
-//           timeout: 3000,
-//           data: {
-//             token: token,
-//           },
-//           headers: {
-//             'request-name': header,
-//           },
-//       });
-//       let {
-//         info,
-//       } = res.data;
-//       if(info){
-//         dispatch({
-//           type: ActionType.GET_USER_INFO,
-//           payload: {
-//             info: info,
-//           }
-//         });
-//       } else {
-//         dispatch({
-//           type: ActionType.GET_USER_INFO,
-//           payload: {
-//             errType: ErrorType.Client.WrongToken,
-//           },
-//           error: true,
-//         });
-//       }
-//     } else {
-//     await dispatch({
-//       type: ActionType.GET_USER_INFO,
-//       payload: {
-//         errType: ErrorType.Client.NoToken,
-//       },
-//       error: true,
-//     });
-//   }
-// } catch (err) {
-//     await dispatch({
-//       type: ActionType.GET_USER_INFO,
-//       payload: {
-//         errType: ErrorType.Server.LogIn,
-//       },
-//       error: true,
-//     }); 
-// }
-// }
+const getUserInfo = (token) => async (dispatch) => {
+  try{
+    let info = await UserManager.getUserInfo(token);
+    if(info){
+        dispatch({
+          type: ActionType.GET_USER_INFO,
+          payload: {
+            info: info,
+          }
+        });
+      } else {
+        dispatch({
+          type: ActionType.GET_USER_INFO,
+          payload: {
+            errType: ErrorType.Client.WrongToken,
+          },
+          error: true,
+        });
+      }
+  } catch (err) {
+      await dispatch({
+        type: ActionType.GET_USER_INFO,
+        payload: {
+          errType: ErrorType.Server.LogIn,
+        },
+        error: true,
+      }); 
+  }
+}
 
 export {
   logInNoToken,

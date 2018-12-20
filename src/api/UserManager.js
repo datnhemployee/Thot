@@ -1,52 +1,63 @@
-import ErrorType, {
-  INVALID_USERNAME,
-  INVALID_PASSWORD,
-  NO_RESPONSE,
-} from '../constant/ErrorType';
+import ErrorType from '../constant/ErrorType';
 import {
   isEmpty,
   isString,
   isRegularExpression,
 } from './StringHelper'
 import {
-  LOG_IN_WITH_AUTH
+  LOG_IN_WITH_AUTH,
+  LOG_IN_WITH_TOKEN,
+  REGISTER,
+  GET_INFO_FROM_DATABASE,
+
 } from '../constant/HttpRequest';
 import axios from 'axios';
 import LocalStorage from '../store/local';
 
 export default class UserManager {
-  constructor (
-    {
-      username,
-      password,
-    }) { 
-    this.props = {
-      token: String,
-      auth: {
-        username: username,
-        password: password,
-      },
-      info: Object,
+  constructor () {}
+
+  static async getToken () {
+    try{
+      if(!this.isRelevantToken()) {
+        token = await this.getTokenFromLocal();
+      }  
+      if(!this.isRelevantToken()) {
+        token = await this.getTokenFromDB();
+      }
+      throw new Error(ErrorType.WRONG_AUTH_TO_GET_TOKEN);
+    } catch (err) {
+      throw new Error(err);
     }
-    console.log('here too: '+ this.props.auth.username);
+  }
+  static async getUserInfo (token) {
+    try{
+      let url = GET_INFO_FROM_DATABASE.URL;
+      let timeout = GET_INFO_FROM_DATABASE.TIME_OUT;
+      let request = GET_INFO_FROM_DATABASE.REQUEST;
+
+      let res = await axios.post( 
+        url,{
+          token: token,
+        },{
+          timeout: timeout,
+          headers: {
+            request: request,
+          },
+      });
+  
+      if(res.data){
+        return res.data.info;
+      } 
+  
+      throw new Error(ErrorType.NO_RESPONSE);
+
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
-  getUsername () {
-    if(this.isRelevantUsername())
-      return this.props.auth.username;
-    return undefined;
-  }
-  getPassword () {
-    if(this.isRelevantUsername())
-      return this.props.auth.password;
-    return undefined;
-  }
-  getUserInfo () {
-    if(isRelevantInfo()) {
-      return this.props.info;
-    }
-  }
-  async getTokenFromLocal ( ) {
+  static async getTokenFromLocal () {
     try{
       let token = await LocalStorage.getToken();
     
@@ -59,66 +70,76 @@ export default class UserManager {
     }
   }
 
-  async getTokenFromDB ( ) {
-    username = this.getUsername();
-    password = this.getPassword();
+  static async getTokenFromDB (
+      username,
+      password,
+    ) {
+      // Có thể kiểm tra sai chỗ này
+    if(!this.isRelevantUsername(username) ||
+    !this.isRelevantPassword(password))
+      throw new Error(
+        ErrorType.WRONG_TYPE_USERNAME_OR_PASSWORD
+      );
 
-    let url = LOG_IN_WITH_AUTH.URL;
-    let timeout = LOG_IN_WITH_AUTH.TIME_OUT;
-    let request = LOG_IN_WITH_AUTH.REQUEST;
+    let url = REGISTER.URL;
+    let timeout = REGISTER.TIME_OUT;
+    let request = REGISTER.REQUEST;
 
+    // 'http://192.168.56.1:8000/LogIn'
+    console.log('url: '+ url);
     // Check Username & password
     let res = await axios.post( 
       url,{
-      },{
-        timeout: timeout,
         auth: {
           username: username,
           password: password,
         },
+        nickName: 'Dat huu',
+      },{
+        timeout: timeout,
         headers: {
           request: request,
         },
     });
+    console.log('res: '+ JSON.stringify(res.data));
 
     if(res.data){
       token = res.data.token;
-      this.props.token = token;
 
       await LocalStorage.setToken(token);
       return token;
     } 
 
-    throw new Error(NO_RESPONSE);
+    throw new Error(ErrorType.NO_RESPONSE);
   }
 
-  setUserInfo (info) {
-    if(this.isRelevantInfo(info))
-      this.props.info = {
-        ...this.props.info,
-        ...info,
-      };
-  }
-
-  isRelevantInfo () {
+  static isRelevantInfo () {
     if (false)
       throw new Error();
     if(true)
       return true;
     return false;
   }
-  isRelevantUsername () {
+  static isRelevantUsername (username) {
     try{
-      return isRegularExpression(this.props.auth.username);
+      return isRegularExpression(username);
     } catch (err) {
-      throw new Error(INVALID_USERNAME);
+      console.log(err);
+      throw new Error(ErrorType.INVALID_USERNAME);
     }
   }
-  isRelevantPassword () {
+  static isRelevantPassword (password) {
     try{
-      return isRegularExpression(this.props.auth.password);
+      return isRegularExpression(password);
     } catch (err) {
-      throw new Error(INVALID_PASSWORD);
+      throw new Error(ErrorType.INVALID_PASSWORD);
+    }
+  }
+  static isRelevantToken (token) {
+    try{
+      return isString(token)&&!isEmpty(token);
+    } catch (err) {
+      throw new Error(ErrorType.INVALID_TOKEN);
     }
   }
 }

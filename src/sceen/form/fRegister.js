@@ -30,9 +30,25 @@ import {
 } from '../../actions/actLogin';
 
 
-export default class fLogin extends Component {
+export default class fRegister extends Component {
   constructor (props) {
     super (props);
+
+    this.getImage = this.getImage.bind(this);
+  }
+
+  async getImage () {
+    const {
+      img,
+    } = this.props;
+
+    // console.log('url = ' + await picker.openPicker({
+    //   mediaType: 'image',
+    //   multiple: true,
+    //   cropping: true,
+    //   width: 300,
+    //   height: 400
+    // }));
   }
 
   render () {
@@ -56,44 +72,53 @@ export default class fLogin extends Component {
       onPasswordChange,
 
       /**
+       * @var {function} this.props.onPasswordChange 
+       * @description Change the state `password` when 
+       *              user type in the `field password`.
+       * @return void
+       * @see login.js {./screen/src/}
+       */
+      onConfirmPasswordChanged,
+
+      /**
+       * @var {function} this.props.onPasswordChange 
+       * @description Change the state `password` when 
+       *              user type in the `field password`.
+       * @return void
+       * @see login.js {./screen/src/}
+       */
+      onEmailChange,
+
+      /**
+       * @var {function} this.props.onPasswordChange 
+       * @description Change the state `password` when 
+       *              user type in the `field password`.
+       * @return void
+       * @see login.js {./screen/src/}
+       */
+      onNickNameChange,
+
+      /**
        * @var {function} this.props.onSubmitForm 
        * @description to get `token` and `user info`  
        *              from server.
        * @return void
        * @see login.js {./screen/src/}
        */
-      onSubmitForm,
+      getImage,
 
     } = this.props;
 
     return (
       <View style={styles.container}>
-        <TextInput
-              style = {{
-                flex: 0.1,
-              }}
-              name={"username"}
-              placeholder={"Tài khoản"}
-              onChangeText={onUsernameChange}
-              sercure={false}
-            />
-        <TextInput
-              style = {{
-                flex: 0.1,
-              }}
-              name={"password"}
-              placeholder={"Mật khẩu"}
-              onChangeText={onPasswordChange}
-              sercure={true}
-            />
         <TouchableOpacity
             style = {styles.button}
-            onPress = {onSubmitForm} // to parent container
+            onPress = {this.getImage} // to parent container
           >
             <Text
               style = {styles.txtLogIn}
             >
-              Đăng Nhập
+              Lấy Hình Từ bộ sưu tập
             </Text>
         </TouchableOpacity>
       </View>

@@ -13,11 +13,12 @@ export default function (
   state = INITIAL_STATE,
   action,
 ) {
-    console.log('recd: '+ JSON.stringify(action));
-    console.log('action.error: '+ (!action.error));
+    console.log('===============================');
+    console.log('action.error: '+ (action.error));
     console.log('action.type: '+ (action.type ));
-    console.log('INPUT_USERNAME_CHANGES: '+ (ActionType.INPUT_USERNAME_CHANGES ));
-    console.log('action.type: '+ (action.type === ActionType.INPUT_USERNAME_CHANGES));
+    console.log('===============================');
+    // console.log('INPUT_USERNAME_CHANGES: '+ (ActionType.INPUT_USERNAME_CHANGES ));
+    // console.log('action.type: '+ (action.type === ActionType.INPUT_USERNAME_CHANGES));
     
     switch (action.type) {
     case ActionType.LOGING_IN_NO_TOKEN:
@@ -27,6 +28,7 @@ export default function (
             ...state,
             ...{
               token: action.payload,
+              errType: undefined,
             }
           }
         } else {
@@ -48,6 +50,7 @@ export default function (
           ...state,
           ...{
             username: action.payload,
+            errType: undefined,
           }
         }
       } else {
@@ -64,6 +67,7 @@ export default function (
           ...state,
           ...{
             password: action.payload,
+            errType: undefined,
           }
       }
     } else {
@@ -80,6 +84,7 @@ export default function (
         ...state,
         ...{
           info: action.payload,
+          errType: undefined,
         }
       }
     } else {
@@ -91,18 +96,13 @@ export default function (
       }
     }
     case ActionType.LOG_OUT:
-    if(!action.error) {
-      return {
-        ...state,
-      }
-    } else {
-      return {
-        ...state,
-        ...{
-          errType: action.payload,
-        }
-      }
-    }
+    // if(!action.error) {
+    //   return {
+    //     errType: undefined,
+    //   }
+    // } else {
+      return {}
+    // }
     default:
       return {
         ...state,

@@ -30,11 +30,16 @@ export const hasWhiteSpace = (val) => {
 }
 
 export const isRegularExpression = (val) => {
+  console.log('isString: '+isString(val));
+
   if(!isString(val)){
     throw new Error(NOT_STRING);
   }
+  console.log('isString: '+isEmpty(val));
   if(isEmpty(val)){
     throw new Error(STRING_EMPTY);
   }
-  return NOT_WORDS_AND_DIGITS_ONLY.test(val);
+
+  console.log(' NOT_WORDS_AND_DIGITS_ONLY.test(val): '+ NOT_WORDS_AND_DIGITS_ONLY.test(val));
+  return !NOT_WORDS_AND_DIGITS_ONLY.test(val);
 }
