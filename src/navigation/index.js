@@ -1,14 +1,14 @@
-import home from '../sceen/src/home';
 import login from '../sceen/src/login';
 import register from '../sceen/src/register';
+import MainTabNavigator from './MainTabNavigator';
 
 import { 
-  createStackNavigator, 
+  createStackNavigator ,
 } from "react-navigation";
 
 export default RootStack = createStackNavigator({
   Login: login,
-  Home: home,
+  Home: MainTabNavigator,
   Register: register
 },{
   initialRouteKey: 'Login',

@@ -23,21 +23,26 @@ import {
   isEmpty,
 } from '../../api/StringHelper';
 import { connect } from 'react-redux';
+import TextInput from '../component/mTextInput';
 import {
   inputUsername,
   inputPassword,
 } from '../../actions/actLogin';
-import FRegister from '../form/fRegister';
+import FAddRecipe from '../form/fAddRecipe';
 
-export default class Register extends Component {
+export default class AddRecipe extends Component {
   constructor (props) {
     super (props);
   } 
 
   render () {
+    const {
+      navigation
+    } = this.props;
+
     return (
       <View style={styles.container}>
-        <FRegister />
+        <FAddRecipe navigation = {navigation}/>
       </View>
     );
   }

@@ -22,6 +22,7 @@ import {
   ScrollView,
   KeyboardAvoidingView ,
   Keyboard,
+  TextInput,
 } from 'react-native';
 import {
   isString,
@@ -61,43 +62,30 @@ const createFormData = (photo, body) => {
   return data
 }
 
-export default class fRegister extends Component {
+export default class Edit extends Component {
   constructor (props) {
     super (props);
 
     this.getImage = this.getImage.bind(this);
     this.snap = this.snap.bind(this);
     this.send = this.send.bind(this);
-    // this.keyboardHideListener = this.keyboardHideListener.bind(this);
+    this.edit = this.edit.bind(this);
 
     this.state = {
       photo:{
         uri: img,
-        // keyboardAvoidingViewKey: 'keyboardAvoidingViewKey',
       },
     }
   }
 
-//   componentDidMount() {
-//     // using keyboardWillHide is better but it does not work for android
-//     this.keyboardHideListener = 
-//       Keyboard.addListener(
-//         Platform.OS === 'android' ? 
-//         'keyboardDidHide': 
-//         'keyboardWillHide', 
-//         this.keyboardHideListener);
-// }
 
-//   componentWillUnmount() {
-//       this.keyboardHideListener.remove()
-//   }
+  edit () {
+    const {
+      navigation 
+    } = this.props;
 
-//   keyboardHideListener() {
-//     this.setState({
-//         keyboardAvoidingViewKey:'keyboardAvoidingViewKey' + new Date().getTime()
-//     });
-// }
-
+    navigation.navigate('Home');    
+  }
   async send () {
 
     const res = await axios.get('http://192.168.56.1:8000/');
@@ -277,35 +265,9 @@ export default class fRegister extends Component {
               color: RED,}}
             onPress={this.snap}
             />
+          
           </View>
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"username"}
-            placeholder={"Tên Tài khoản"}
-            onChangeText={onUsernameChange}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"password"}
-            placeholder={"Mật khẩu"}
-            onChangeText={onPasswordChange}
-            sercure={true}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"confirm"}
-            placeholder={"Xác nhận lại mật khẩu"}
-            onChangeText={onConfirmPasswordChanged}
-            sercure={false}
-          />
-          <MTextInput
+          <TextInput
             style = {{
               flex: 0.1,
             }}
@@ -314,7 +276,7 @@ export default class fRegister extends Component {
             onChangeText={onNickNameChange}
             sercure={false}
           />
-          <MTextInput
+          <TextInput
             style = {{
               flex: 0.1,
             }}
@@ -323,7 +285,7 @@ export default class fRegister extends Component {
             onChangeText={onEmailChange}
             sercure={false}
           />
-          <MTextInput
+          <TextInput
             style = {{
               flex: 0.1,
             }}
@@ -332,7 +294,7 @@ export default class fRegister extends Component {
             onChangeText={onAddressChange}
             sercure={false}
           />
-          <MTextInput
+          <TextInput
             style = {{
               flex: 0.1,
             }}
@@ -344,12 +306,12 @@ export default class fRegister extends Component {
           />
           <TouchableOpacity
               style = {styles.button}
-              onPress = {this.send} // to parent container
+              onPress = {this.edit} // to parent container
             >
               <Text
                 style = {styles.txtLogIn}
               >
-                Đăng kí
+                Chỉnh sửa
               </Text>
           </TouchableOpacity>
           <View style={{ height: 60 }} />
@@ -370,6 +332,3 @@ const styles = StyleSheet.create({
     color: 'black'
   }
 });
-
-
-

@@ -43,6 +43,7 @@ class login extends Component {
     this.usernameChange = this.usernameChange.bind(this);
     this.passwordChange = this.passwordChange.bind(this);
     this.formSubmitted = this.formSubmitted.bind(this);
+    this.onRegister = this.onRegister.bind(this);
     
   }
   async componentWillMount () {
@@ -68,25 +69,32 @@ class login extends Component {
     await logInWithToken ();
   }
 
-  async componentWillReceiveProps (nextProps) {
-    let {
-      logOut,
-      getUserInfo,
+  // async componentWillReceiveProps (nextProps) {
+  //   let {
+  //     logOut,
+  //     getUserInfo,
+  //     navigation,
+  //   } = this.props;
+
+  //   let {
+  //     token
+  //   } = nextProps;
+  //   console.log('Nextprops: ' + JSON.stringify(nextProps));
+  //     // if(token){
+  //     // await getUserInfo(token);
+
+  //     // // const {username} = this.props;
+  //     // // if(username)
+  //     // navigation.navigate('Home');  
+  //     // logOut();
+  //   // } 
+  // }
+
+  onRegister = () =>{
+    const {
       navigation,
     } = this.props;
-
-    let {
-      token
-    } = nextProps;
-    console.log('Nextprops: ' + JSON.stringify(nextProps));
-    if(token){
-      await getUserInfo(token);
-
-      // const {username} = this.props;
-      // if(username)
-      navigation.navigate('Home',{token});  
-      logOut();
-    } 
+    navigation.navigate('Register');
   }
 
 
@@ -99,9 +107,10 @@ class login extends Component {
     } = this.props;
 
     console.log('formSubmitted: ' + username);
-    navigation.navigate('Register');  
+      // navigation.navigate('Home');  
+      navigation.navigate('Home',{username});  
 
-    await logInNoToken ({username,password});
+    // await logInNoToken ({username,password});
   }
 
   usernameChange = async (val) => {
@@ -153,14 +162,21 @@ class login extends Component {
             />
           </View>
           <View style={styles.footer}>
-            
+          <TouchableOpacity
+            style = {styles.button}
+            onPress = {this.onRegister} // to parent container
+          >
+            <Text
+              style = {styles.txtLogIn}
+            >
+              Đăng kí
+            </Text>
+        </TouchableOpacity>
           </View>
         </View>
     );
   }
 }
-
-
 
 const styles = StyleSheet.create({
   container: {

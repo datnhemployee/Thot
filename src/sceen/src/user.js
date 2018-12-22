@@ -22,6 +22,7 @@ import {
   ScrollView,
   KeyboardAvoidingView ,
   Keyboard,
+  TextInput,
 } from 'react-native';
 import {
   isString,
@@ -61,42 +62,21 @@ const createFormData = (photo, body) => {
   return data
 }
 
-export default class fRegister extends Component {
+export default class User extends Component {
   constructor (props) {
     super (props);
 
     this.getImage = this.getImage.bind(this);
     this.snap = this.snap.bind(this);
     this.send = this.send.bind(this);
-    // this.keyboardHideListener = this.keyboardHideListener.bind(this);
 
     this.state = {
       photo:{
         uri: img,
-        // keyboardAvoidingViewKey: 'keyboardAvoidingViewKey',
       },
     }
   }
 
-//   componentDidMount() {
-//     // using keyboardWillHide is better but it does not work for android
-//     this.keyboardHideListener = 
-//       Keyboard.addListener(
-//         Platform.OS === 'android' ? 
-//         'keyboardDidHide': 
-//         'keyboardWillHide', 
-//         this.keyboardHideListener);
-// }
-
-//   componentWillUnmount() {
-//       this.keyboardHideListener.remove()
-//   }
-
-//   keyboardHideListener() {
-//     this.setState({
-//         keyboardAvoidingViewKey:'keyboardAvoidingViewKey' + new Date().getTime()
-//     });
-// }
 
   async send () {
 
@@ -277,81 +257,32 @@ export default class fRegister extends Component {
               color: RED,}}
             onPress={this.snap}
             />
+          <TouchableOpacity
+              style = {styles.button}
+              onPress = {this.makeFriend} // to parent container
+            >
+              <Text
+                style = {styles.txtLogIn}
+              >
+                Kết bạn
+              </Text>
+          </TouchableOpacity>
           </View>
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"username"}
-            placeholder={"Tên Tài khoản"}
-            onChangeText={onUsernameChange}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"password"}
-            placeholder={"Mật khẩu"}
-            onChangeText={onPasswordChange}
-            sercure={true}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"confirm"}
-            placeholder={"Xác nhận lại mật khẩu"}
-            onChangeText={onConfirmPasswordChanged}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"name"}
-            placeholder={"Tên của bạn"}
-            onChangeText={onNickNameChange}
-            sercure={false}
-          />
-          <MTextInput
+          <Text>{name}</Text>
+          <Text>{email}</Text>
+          <Text>{address}</Text>
+          <Text>{email}</Text>
+           
+          <TextInput
             style = {{
               flex: 0.1,
             }}
             name={"email"}
             placeholder={"Email"}
-            onChangeText={onEmailChange}
-            sercure={false}
+            editable={false}
+            value={email}
+            sercure={phone}
           />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"address"}
-            placeholder={"Địa chỉ"}
-            onChangeText={onAddressChange}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"phone"}
-            placeholder={"Điện thoại"}
-            onChangeText={onPhoneNumberChange}
-            sercure={false}
-            keyboardType={'number-pad'}
-          />
-          <TouchableOpacity
-              style = {styles.button}
-              onPress = {this.send} // to parent container
-            >
-              <Text
-                style = {styles.txtLogIn}
-              >
-                Đăng kí
-              </Text>
-          </TouchableOpacity>
           <View style={{ height: 60 }} />
         </ScrollView>
       </KeyboardAvoidingView>
@@ -370,6 +301,3 @@ const styles = StyleSheet.create({
     color: 'black'
   }
 });
-
-
-

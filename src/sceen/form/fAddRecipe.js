@@ -22,6 +22,8 @@ import {
   ScrollView,
   KeyboardAvoidingView ,
   Keyboard,
+  TextInput,
+  FlatList,
 } from 'react-native';
 import {
   isString,
@@ -35,12 +37,12 @@ import {
 } from '../../actions/actLogin';
 import ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
-import { Header } from 'react-navigation';
 import Button from '../component/Button';
 import {
   IconCamera,
   IconPicture,
 } from '../../constant/picture'
+import RecipeList from '../component/MyList';
 
 const img = 'https://images.pexels.com/photos/371633/pexels-photo-371633.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500';
 
@@ -61,42 +63,78 @@ const createFormData = (photo, body) => {
   return data
 }
 
-export default class fRegister extends Component {
+export default class fAddRecipe extends Component {
   constructor (props) {
     super (props);
 
     this.getImage = this.getImage.bind(this);
     this.snap = this.snap.bind(this);
     this.send = this.send.bind(this);
-    // this.keyboardHideListener = this.keyboardHideListener.bind(this);
+
+    this.onChangeElement=this.onChangeElement.bind(this);
+    this.onDeletePress=this.onDeletePress.bind(this);
+    this.onAddPress=this.onAddPress.bind(this);
+    this.onAddChanged=this.onAddChanged.bind(this);
+    this.confirm=this.confirm.bind(this);
 
     this.state = {
+      recipe: '',
       photo:{
         uri: img,
-        // keyboardAvoidingViewKey: 'keyboardAvoidingViewKey',
       },
+      listRecipe: [],
     }
   }
 
-//   componentDidMount() {
-//     // using keyboardWillHide is better but it does not work for android
-//     this.keyboardHideListener = 
-//       Keyboard.addListener(
-//         Platform.OS === 'android' ? 
-//         'keyboardDidHide': 
-//         'keyboardWillHide', 
-//         this.keyboardHideListener);
-// }
+  confirm = () => {
+    const {
+      navigation,
+    } = this.props;
+    navigation.navigate('Home')
+  }
+  onDeletePress = (index) => {
+    const {
+      listRecipe,
+    } = this.state;
+    console.log('index: '+ JSON.stringify(index));
 
-//   componentWillUnmount() {
-//       this.keyboardHideListener.remove()
-//   }
+    let temp = listRecipe.slice();
+    temp = temp.slice(index+1);
+    console.log('state: '+ JSON.stringify(this.state));
+    console.log('temp: '+ JSON.stringify(temp));
+    this.setState({listRecipe:temp.slice()});
+  }
+  onChangeElement = (val,index) => {
+    const {
+      listRecipe,
+    } = this.state;
 
-//   keyboardHideListener() {
-//     this.setState({
-//         keyboardAvoidingViewKey:'keyboardAvoidingViewKey' + new Date().getTime()
-//     });
-// }
+    const temp = listRecipe.slice();
+    temp[index] = val;
+    this.setState({listRecipe:temp.slice()});
+  }
+
+  onAddChanged (value) {
+    console.log('recipe: '+ JSON.stringify(value));
+    this.setState({recipe:value});
+    console.log('state: '+ JSON.stringify(this.state));
+
+  }
+
+  onAddPress = () => {
+    const {
+      listRecipe,
+      recipe,
+    } = this.state;
+    console.log('state: '+ JSON.stringify(this.state));
+    console.log('recipe: '+ JSON.stringify(recipe));
+
+    let temp = listRecipe.slice();
+    temp.push(recipe);
+    console.log('temp: '+ JSON.stringify(temp));
+
+    this.setState({listRecipe:temp.slice()});
+  }
 
   async send () {
 
@@ -119,8 +157,6 @@ export default class fRegister extends Component {
         createFormData(this.state.photo, {}),
         config)
     }
-    
-
   }
   
   async getImage () {
@@ -173,60 +209,6 @@ export default class fRegister extends Component {
       onUsernameChange,
 
       /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onPasswordChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onConfirmPasswordChanged,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onEmailChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onNickNameChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onPhoneNumberChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onAddressChange,
-
-      /**
        * @var {function} this.props.onSubmitForm 
        * @description to get `token` and `user info`  
        *              from server.
@@ -238,26 +220,34 @@ export default class fRegister extends Component {
     } = this.props;
 
     let {
-      // keyboardAvoidingViewKey,
+      listRecipe,
     } = this.state;
     return (
         <View 
         style={{flex:1}}
         >
         <KeyboardAvoidingView 
-      style={{flex:0}} 
-      behavior="padding" 
-      // key={keyboardAvoidingViewKey}
-      // keyboardVerticalOffset = {0}
-      enabled = {false}
-      >
+          style={{flex:0}} 
+          behavior="padding" 
+          enabled = {false}
+        >
         <ScrollView 
           // style={{flex:1}}
           >
+          <MTextInput
+            style = {{
+              flex: 0.1,
+            }}
+            name={"Dish"}
+            placeholder={"Tên món ăn"}
+            onChangeText={onUsernameChange}
+            sercure={false}
+          />
           <Image
             style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,resizeMode: 'contain'}}
             source={this.getPhoto()}
           />
+          
           <View style={styles.container}>
           <Button 
             flex = {1}
@@ -278,78 +268,32 @@ export default class fRegister extends Component {
             onPress={this.snap}
             />
           </View>
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"username"}
-            placeholder={"Tên Tài khoản"}
-            onChangeText={onUsernameChange}
-            sercure={false}
+          <TextInput
+            style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}
+            multiline={true}
+            placeholder={'Giới thiệu về món ăn'}
           />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"password"}
-            placeholder={"Mật khẩu"}
-            onChangeText={onPasswordChange}
-            sercure={true}
+          <TextInput
+            style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}
+            multiline={true}
+            placeholder={'Nguyên liệu của món ăn'}
           />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"confirm"}
-            placeholder={"Xác nhận lại mật khẩu"}
-            onChangeText={onConfirmPasswordChanged}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"name"}
-            placeholder={"Tên của bạn"}
-            onChangeText={onNickNameChange}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"email"}
-            placeholder={"Email"}
-            onChangeText={onEmailChange}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"address"}
-            placeholder={"Địa chỉ"}
-            onChangeText={onAddressChange}
-            sercure={false}
-          />
-          <MTextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"phone"}
-            placeholder={"Điện thoại"}
-            onChangeText={onPhoneNumberChange}
-            sercure={false}
-            keyboardType={'number-pad'}
+          <RecipeList 
+            listElement={listRecipe}
+            onChangeElement={this.onChangeElement }
+            onDeletePress={this.onDeletePress}
+            onAddPress={this.onAddPress}
+            onAddChanged={this.onAddChanged}
+            addPlaceHolder={'Thêm bước làm'}
           />
           <TouchableOpacity
               style = {styles.button}
-              onPress = {this.send} // to parent container
+              onPress = {this.confirm} // to parent container
             >
               <Text
                 style = {styles.txtLogIn}
               >
-                Đăng kí
+                Đăng
               </Text>
           </TouchableOpacity>
           <View style={{ height: 60 }} />
@@ -370,6 +314,3 @@ const styles = StyleSheet.create({
     color: 'black'
   }
 });
-
-
-

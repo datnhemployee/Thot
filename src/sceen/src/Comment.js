@@ -23,21 +23,34 @@ import {
   isEmpty,
 } from '../../api/StringHelper';
 import { connect } from 'react-redux';
+import TextInput from '../component/mTextInput';
 import {
   inputUsername,
   inputPassword,
 } from '../../actions/actLogin';
-import FRegister from '../form/fRegister';
+import FComment from '../form/fComment';
 
-export default class Register extends Component {
+export default class Comment extends Component {
   constructor (props) {
     super (props);
+
+    this.state = {
+      Comments: [{author:'Dat',content:'vsavasv'},{author:'dsa',content:'vsavasv'}],
+    }
   } 
 
   render () {
+    const {
+      navigation
+    } = this.props;
+    const {
+      Comments
+    } = this.state;
     return (
       <View style={styles.container}>
-        <FRegister />
+        <FComment 
+        comments = {Comments}
+        navigation = {navigation}/>
       </View>
     );
   }

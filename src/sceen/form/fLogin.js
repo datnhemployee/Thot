@@ -23,7 +23,7 @@ import {
   isEmpty,
 } from '../../api/StringHelper';
 import { connect } from 'react-redux';
-import TextInput from '../component/textInput';
+import MTextInput from '../component/mTextInput';
 import {
   inputUsername,
   inputPassword,
@@ -68,7 +68,7 @@ export default class fLogin extends Component {
 
     return (
       <View style={styles.container}>
-        <TextInput
+        <MTextInput
               style = {{
                 flex: 0.1,
               }}
@@ -77,7 +77,7 @@ export default class fLogin extends Component {
               onChangeText={onUsernameChange}
               sercure={false}
             />
-        <TextInput
+        <MTextInput
               style = {{
                 flex: 0.1,
               }}
@@ -106,9 +106,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  button:{
-    flex: 0.1,
-  },
+  // button:{
+  //   flex: 0.1,
+  // },
   txtLogIn: {
     fontFamily: FONT.segoeUIL,
     color: 'white'

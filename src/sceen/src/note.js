@@ -19,41 +19,29 @@ import {
   IconSaved,
   IconNotSaved
 } from '../../constant/picture'
-import PostDish from '../component/PostDish'
+import NoteDish from '../component/NoteDish'
 import MainTab from '../component/MainTab'
 import MainHeader from '../component/MainHeader'
 
 
 const pic = require('../../img/default_pic.png')
-export default class Home extends Component {
+export default class Note extends Component {
   constructor (props) {
     super(props);
     this.state = {
       page: 0,
-      dishes: [{
-        author: {
-          id: 1,
-          name: 'Dat Huu',
-        },
-        id: 1,
-        pic: pic,
-        isLike: true,
-        isComment: false,
-        isSave: true,
-        likes: 12,
-        comments: 13,
+      notes: [{
+        dish: {
+          name:'Phở',
+          author:'Dat Huu',
+          notes: 'gì đó đó',
+        }
       },{
-        author: {
-          id: 2,
-          name: 'abcd',
-        },
-        id: 2,
-        pic: pic,
-        isLike: false,
-        isComment: true,
-        isSave: false,
-        likes: 1,
-        comments: 13,
+        dish: {
+          name:'Phở',
+          author:'B',
+          notes: 'gì đó đó',
+        }
       }]
     }
     this.getMainTab =this.getMainTab.bind(this);
@@ -74,7 +62,7 @@ export default class Home extends Component {
   getMainTab () {
     const {navigation} = this.props;
     return (
-      <MainTab navigation={navigation} tabNumber={1}/>
+      <MainTab navigation={navigation} tabNumber={2}/>
     )
   }
 
@@ -89,10 +77,12 @@ export default class Home extends Component {
     const {
       navigation
     } = this.props;
+    console.log('item' + JSON.stringify(item))
     return (
       <View>
-        <PostDish 
-          dish = {item}
+        <NoteDish 
+          note = {item}
+          onChangeText={()=>{}}
           navigation={navigation}
           />
       </View>
@@ -101,14 +91,14 @@ export default class Home extends Component {
 
   getPost () {
     const {
-      dishes,
+      notes,
     } = this.state;
 
-    if(dishes){
+    if(notes){
       return (<FlatList
         style={{flex:8,marginBottom:5}}
         scrollEnabled={true}
-        data={dishes}
+        data={notes}
         renderItem={({item}) => {
           console.log(JSON.stringify(item));
           return this.renderItem(item)}
