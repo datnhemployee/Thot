@@ -35,7 +35,6 @@ import {
   inputUsername,
   inputPassword,
 } from '../../actions/actLogin';
-import ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
 import Button from '../component/Button';
 import {
@@ -46,182 +45,36 @@ import RecipeList from '../component/MyList';
 
 const img = 'https://images.pexels.com/photos/371633/pexels-photo-371633.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500';
 
-const createFormData = (photo, body) => {
-  const data = new FormData()
 
-  data.append('photo', {
-    name: photo.fileName,
-    type: photo.type,
-    uri:
-      Platform.OS === 'android' ? photo.uri : photo.uri.replace('file://', ''),
-  })
-
-  Object.keys(body).forEach(key => {
-    data.append(key, body[key])
-  })
-
-  return data
-}
 
 export default class fAddRecipe extends Component {
   constructor (props) {
     super (props);
-
-    this.getImage = this.getImage.bind(this);
-    this.snap = this.snap.bind(this);
-    this.send = this.send.bind(this);
-
-    this.onChangeElement=this.onChangeElement.bind(this);
-    this.onDeletePress=this.onDeletePress.bind(this);
-    this.onAddPress=this.onAddPress.bind(this);
-    this.onAddChanged=this.onAddChanged.bind(this);
-    this.confirm=this.confirm.bind(this);
-
-    this.state = {
-      recipe: '',
-      photo:{
-        uri: img,
-      },
-      listRecipe: [],
-    }
-  }
-
-  confirm = () => {
-    const {
-      navigation,
-    } = this.props;
-    navigation.navigate('Home')
-  }
-  onDeletePress = (index) => {
-    const {
-      listRecipe,
-    } = this.state;
-    console.log('index: '+ JSON.stringify(index));
-
-    let temp = listRecipe.slice();
-    temp = temp.slice(index+1);
-    console.log('state: '+ JSON.stringify(this.state));
-    console.log('temp: '+ JSON.stringify(temp));
-    this.setState({listRecipe:temp.slice()});
-  }
-  onChangeElement = (val,index) => {
-    const {
-      listRecipe,
-    } = this.state;
-
-    const temp = listRecipe.slice();
-    temp[index] = val;
-    this.setState({listRecipe:temp.slice()});
-  }
-
-  onAddChanged (value) {
-    console.log('recipe: '+ JSON.stringify(value));
-    this.setState({recipe:value});
-    console.log('state: '+ JSON.stringify(this.state));
-
-  }
-
-  onAddPress = () => {
-    const {
-      listRecipe,
-      recipe,
-    } = this.state;
-    console.log('state: '+ JSON.stringify(this.state));
-    console.log('recipe: '+ JSON.stringify(recipe));
-
-    let temp = listRecipe.slice();
-    temp.push(recipe);
-    console.log('temp: '+ JSON.stringify(temp));
-
-    this.setState({listRecipe:temp.slice()});
-  }
-
-  async send () {
-
-    const res = await axios.get('http://192.168.56.1:8000/');
-    const config = {
-      onUploadProgress: function(progressEvent) {
-
-        var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total )
-  
-        console.log(percentCompleted)
-  
-      }
-    }
-    console.log(res.data);
-
-    if(this.state.photo.uri === img)
-      alert('No image has been found.')
-    else{
-      await axios.post('http://192.168.56.1:8000/Upload',
-        createFormData(this.state.photo, {}),
-        config)
-    }
-  }
-  
-  async getImage () {
-    const {
-      img,
-    } = this.props;
-
-      const options = {
-        noData: true,
-      }
-      ImagePicker.launchImageLibrary(options, response => {
-        if (response.uri) {
-          this.setState({ photo: response })
-        }
-      })
-  }
-
-  async snap () {
-    const {
-      img,
-    } = this.props;
-
-      const options = {
-        noData: true,
-      }
-      ImagePicker.launchCamera(options, response => {
-        if (response.uri) {
-          this.setState({ photo: response })
-        }
-      })
+    
   }
 
   getPhoto () {
-    console.log('photo :'+ JSON.stringify(this.state.photo))
-    let photo = this.state.photo;
-    if(photo)
-      return {uri: photo.uri};
+    // let photo = this.props;
+    // if(photo)
+    //   return {uri: photo.uri};
     return {uri: img};
   }
 
   render () {
     let {
-      /**
-       * @var {function} this.props.onUsernameChange 
-       * @description Change the state `username` when 
-       *              user type in the `field username`.
-       * @return void
-       * @see login {./screen/src/}
-       */
-      onUsernameChange,
-
-      /**
-       * @var {function} this.props.onSubmitForm 
-       * @description to get `token` and `user info`  
-       *              from server.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
+      onDishNameChange,
+      listRecipe,
+      onChangeElement,
+      onDeletePress,
+      onAddPress,
+      onAddChanged,
+      onIntroChange,
+      onIngredientsChange,
       getImage,
-
+      snap,
+      confirm,
     } = this.props;
 
-    let {
-      listRecipe,
-    } = this.state;
     return (
         <View 
         style={{flex:1}}
@@ -240,7 +93,7 @@ export default class fAddRecipe extends Component {
             }}
             name={"Dish"}
             placeholder={"Tên món ăn"}
-            onChangeText={onUsernameChange}
+            onChangeText={onDishNameChange}
             sercure={false}
           />
           <Image
@@ -256,7 +109,7 @@ export default class fAddRecipe extends Component {
             txtStyle={{
               fontFamily:FONT.segoeUIL,
               color: RED,}}
-            onPress={this.getImage}
+            onPress={getImage}
             />
           <Button 
             flex = {1}
@@ -265,30 +118,32 @@ export default class fAddRecipe extends Component {
             txtStyle={{
               fontFamily:FONT.segoeUIL,
               color: RED,}}
-            onPress={this.snap}
+            onPress={snap}
             />
           </View>
           <TextInput
-            style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}
+            style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,borderRadius:5,borderWidth:2,borderColor:LIGHT_GRAY}}
             multiline={true}
             placeholder={'Giới thiệu về món ăn'}
+            onChangeText={onIntroChange}
           />
           <TextInput
-            style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}
+            style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,borderRadius:5,borderWidth:2,borderColor:LIGHT_GRAY}}
             multiline={true}
             placeholder={'Nguyên liệu của món ăn'}
+            onChangeText={onIngredientsChange}
           />
           <RecipeList 
             listElement={listRecipe}
-            onChangeElement={this.onChangeElement }
-            onDeletePress={this.onDeletePress}
-            onAddPress={this.onAddPress}
-            onAddChanged={this.onAddChanged}
+            onChangeElement={onChangeElement }
+            onDeletePress={onDeletePress}
+            onAddPress={onAddPress}
+            onAddChanged={onAddChanged}
             addPlaceHolder={'Thêm bước làm'}
           />
           <TouchableOpacity
               style = {styles.button}
-              onPress = {this.confirm} // to parent container
+              onPress = {confirm} // to parent container
             >
               <Text
                 style = {styles.txtLogIn}
@@ -306,11 +161,16 @@ export default class fAddRecipe extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    // paddingVertical: 20
-    // flex: 1
+    flexDirection: 'row',
   },
   txtLogIn: {
     fontFamily: FONT.segoeUIL,
-    color: 'black'
+    color: 'white',
+    fontSize: 20,
+    backgroundColor: LIGHT_RED,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center'
   }
 });

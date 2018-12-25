@@ -16,12 +16,8 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  Image,
-  Platform,
-  ScrollView,
   KeyboardAvoidingView ,
-  Keyboard,
+  ToastAndroid,
   TextInput,
   FlatList,
 } from 'react-native';
@@ -39,51 +35,79 @@ import ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
 import Button from '../component/Button';
 import {
-  IconCamera,
-  IconPicture,
-} from '../../constant/picture'
+  comment,
+  getComments,
+} from '../../actions/actComment';
 import CommentList from '../component/CommentList';
 
 const img = 'https://images.pexels.com/photos/371633/pexels-photo-371633.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500';
 
-export default class fAddRecipe extends Component {
+class fComment extends Component {
   constructor (props) {
     super (props);
 
     this.onAddPress=this.onAddPress.bind(this);
     this.onAddChanged=this.onAddChanged.bind(this);
-    const {
-      comments,
-    } = this.props;
+    this.onEndReached=this.onEndReached.bind(this);
+    this.onRefresh=this.onRefresh.bind(this);
 
     this.state = {
-      comment: '',
+      content: '',
       photo:{
         uri: img,
       },
-      comments,
+      refreshing: false,
     }
   }
 
-  onAddChanged (value) {
-    console.log('recipe: '+ JSON.stringify(value));
-    this.setState({comment:value});
-    console.log('state: '+ JSON.stringify(this.state));
-
+  async onRefresh () {
+    await this.onEndReached();
   }
 
-  onAddPress = () => {
+  async onEndReached () {
     const {
-      comments,
-      comment,
+      getComments,
+      postID,
+    } = this.props;
+    this.setState({refreshing:true})
+    await getComments({
+      postID,
+    });
+    this.setState({refreshing:false})
+  }
+
+  async componentWillMount () {
+    await this.onEndReached();
+  }
+
+  onAddChanged (value) {
+    this.setState({content:value});
+  }
+
+  async onAddPress () {
+    const {
+      content,
     } = this.state;
-    console.log('state: '+ JSON.stringify(this.state));
+    const {
+      userID,
+      postID,
+      comment,
+    } = this.props;
+    console.log('onAddPress: '+ JSON.stringify(this.state));
 
-    let temp = comments.slice();
-    temp.push({author:'Dat',content:comment});
-    console.log('temp: '+ JSON.stringify(temp));
+    console.log('onAddPress: '+ JSON.stringify({
+      content,
+      userID,
+      postID,
+      }));
 
-    this.setState({comments:temp.slice()});
+      comment({
+      content,
+      userID,
+      postID,
+      });
+    await this.onEndReached();
+
   }
 
   getPhoto () {
@@ -95,12 +119,12 @@ export default class fAddRecipe extends Component {
   }
 
   render () {
+    
     const {
       navigation,
+      listComment,
     } = this.props;
-    let {
-      comments,
-    } = this.state;
+    console.log('Comment Comment: ',JSON.stringify(listComment))
     return (
         <View 
         style={{flex:1}}
@@ -112,14 +136,18 @@ export default class fAddRecipe extends Component {
         >
           <CommentList 
             navigation={navigation}
-            listElement={comments}
+            listElement={listComment}
             onAddPress={this.onAddPress}
             onAddChanged={this.onAddChanged}
             addPlaceHolder={'Bình luận của bạn'}
+            onRefresh={this.onRefresh}
+            onEndReached={this.onEndReached}
+            refreshing={this.state.refreshing}
           />
       </KeyboardAvoidingView>
       </View>
     );
+  
   }
 }
 
@@ -133,3 +161,34 @@ const styles = StyleSheet.create({
     color: 'black'
   }
 });
+
+const mapStateToProps = (
+  state) => {
+    return {
+      list: state.dish.list, 
+      token: state.auth.token, 
+      userID: state.auth._id, 
+      listComment: state.comments.listComment,
+    }
+  
+ }
+ 
+ const mapDispatchToProps = (dispatch) => ({
+   comment: (data
+    // ,
+    // success,
+    // failed
+    ) => dispatch(comment(data
+      // ,
+      // success,
+      // failed
+      )),
+    getComments: (data) => dispatch(getComments(data)),
+    logOut: () => dispatch(logOut()),
+ });
+ 
+ export default connect(
+   mapStateToProps,
+   mapDispatchToProps,
+ )(fComment);
+

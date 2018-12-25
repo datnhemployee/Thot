@@ -13,11 +13,13 @@ import {
   DEFAULT_PIC,
   IconSaved,
   IconNotSaved,
+  IconAdd,
 } from '../../constant/picture';
 import MInputText from './mTextInput';
 import RecipeDetail from './RecipeDetail';
 import Button from './Button';
 import MyList from './MyList';
+import { LIGHT_GRAY } from '../../constant/style';
 
 export default class CommentList extends MyList {
   constructor (props){
@@ -30,17 +32,14 @@ export default class CommentList extends MyList {
 
   renderElement (item,index) {
     const { navigation} = this.props;
+    console.log('item',JSON.stringify(item))
     return (
       <View>
         <TouchableOpacity
-          onPress={()=>{navigation.navigate('User')}}>
-          <Text> @ {item.author}</Text>
+          onPress={()=>{navigation.navigate('User',{nickName:item.author})}}>
+          <Text style={{color:'black'}}> @ {item.author}</Text>
         </TouchableOpacity>
-        <TextInput 
-          value={item.content}
-          editable={false}
-          multiline={true}
-        />
+        <Text >{item.content}</Text>
       </View>
     )
   }
@@ -51,20 +50,27 @@ export default class CommentList extends MyList {
       onAddPress,
       onAddChanged,
       addPlaceHolder,
+      onRefresh,
+      onEndReached,
+      refreshing,
     } = this.props;
-    const {
-      refresh,
-    } = this.state;
+    
     return (
       <View>
         <FlatList 
           style={styles} 
           data={listElement}
+          onRefresh={onRefresh}
+          onEndReachedThreshold={0.5}
+          onEndReached={onEndReached}
           renderItem={({item,index})=>this.renderElement(item,index)}
-          refreshing={refresh}
+          refreshing={refreshing}
+          keyExtractor={(item,index)=>JSON.stringify(item)+index}
         />
         <View style = {{
-              borderWidth: 1,
+              backgroundColor: LIGHT_GRAY,
+              borderRadius: 5,
+              flexDirection:'row'
             }}>
           <TextInput
             // style = {{
@@ -76,9 +82,11 @@ export default class CommentList extends MyList {
             sercure={false}
           />
           <Button 
-          // flex = {1}
-          customIcon={IconSaved()}
+          flex = {1}
+          customIcon={IconAdd()}
           onPress={onAddPress}
+          justifyContent={'flex-end'}
+          alignItems={'center'}
           />
         </View>
       </View>

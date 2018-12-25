@@ -35,7 +35,7 @@ export const IconLoveClicked = () => <Icon
   name= 'favorite'
   type= 'MaterialIcons'
   size={26}
-  color= {LIGHT_GRAY}
+  color= {RED}
   underlayColor= '#00aced'
 />
 
@@ -74,7 +74,7 @@ export const IconCamera = () => <Icon
 export const IconFeedClicked = () => <Icon
   name= 'library-books'
   type= 'MaterialIcons'
-  size={26}
+  size={30}
   color= {RED}
   underlayColor= '#00aced'
 />
@@ -82,7 +82,7 @@ export const IconFeedClicked = () => <Icon
 export const IconFeed = () => <Icon
   name= 'filter-none'
   type= 'MaterialIcons'
-  size={26}
+  size={30}
   color= {LIGHT_GRAY}
   underlayColor= '#00aced'
 />
@@ -90,7 +90,7 @@ export const IconFeed = () => <Icon
 export const IconAdd = () => <Icon
 name= 'add'
 type= 'MaterialIcons'
-size={26}
+size={35}
 color= {RED}
 underlayColor= '#00aced'
 />

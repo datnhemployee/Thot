@@ -22,14 +22,12 @@ import {
   View, 
   TouchableOpacity,
   Image,
+  ToastAndroid,
 } from 'react-native';
 import {connect } from 'react-redux';
 import {
-  inputUsername,
-  inputPassword,
-  logInNoToken,
-  logInWithToken,
-  getUserInfo,
+  logInWithAuth,
+  // logInWithToken,
   logOut,
 } from '../../actions/actLogin';
 import FLogin from '../form/fLogin';
@@ -40,54 +38,29 @@ class login extends Component {
   
   constructor(props) {
     super(props);
+
     this.usernameChange = this.usernameChange.bind(this);
     this.passwordChange = this.passwordChange.bind(this);
     this.formSubmitted = this.formSubmitted.bind(this);
     this.onRegister = this.onRegister.bind(this);
-    
-  }
-  async componentWillMount () {
-    let {
-      logInWithToken,
-    } = this.props;
 
-    // console.log(JSON.stringify(Connection.defUrl + Connection.defPath.logIn));
-    // let res = await axios.post( 
-    //   Connection.defUrl + Connection.defPath.logIn,{
-    //   },{
-    //     timeout: 3000,
-    //     auth: {
-    //       username: 'username',
-    //       password: 'password',
-    //     },
-    //     headers: {
-    //       request: 'log-in-with-auth',
-    //     },
-    // });
-    // console.log(JSON.stringify(res));
-
-    await logInWithToken ();
+    this.state = {
+      username:'',
+      password:'',
+    }
   }
 
-  // async componentWillReceiveProps (nextProps) {
-  //   let {
-  //     logOut,
-  //     getUserInfo,
-  //     navigation,
+  // async componentWillMount() {
+  //   const {
+  //     logInWithToken
   //   } = this.props;
-
-  //   let {
-  //     token
-  //   } = nextProps;
-  //   console.log('Nextprops: ' + JSON.stringify(nextProps));
-  //     // if(token){
-  //     // await getUserInfo(token);
-
-  //     // // const {username} = this.props;
-  //     // // if(username)
-  //     // navigation.navigate('Home');  
-  //     // logOut();
-  //   // } 
+    
+  //   await logInWithToken((data) => {
+  //       ToastAndroid.show(message,ToastAndroid.SHORT);
+  //       navigation.navigate('Home',{...data});  
+  //     }, (message) => {
+  //         ToastAndroid.show(message,ToastAndroid.SHORT);
+  //   });
   // }
 
   onRegister = () =>{
@@ -100,80 +73,68 @@ class login extends Component {
 
    formSubmitted = async () => {
     let {
-      username,
-      password,
-      logInNoToken,
+      logInWithAuth,
       navigation
     } = this.props;
 
-    console.log('formSubmitted: ' + username);
-      // navigation.navigate('Home');  
-      navigation.navigate('Home',{username});  
-
-    // await logInNoToken ({username,password});
-  }
-
-  usernameChange = async (val) => {
     let {
       username,
-      usernameChange
-    } = this.props;
+      password,
+    } = this.state;
 
-    console.log('usernameChange: ' + val);
-    console.log('usernameChange: ' + username);
+    console.log('username ',username, 'password ',password);
 
-    await usernameChange (val);
+    await logInWithAuth (
+    {
+      username,
+      password
+    }, (message) => {
+      ToastAndroid.show(message,ToastAndroid.SHORT);
+      navigation.navigate('Home');  
+
+    }, (message) => {
+        ToastAndroid.show(message,ToastAndroid.SHORT);
+      });
   }
 
-  passwordChange = async (val) => {
-    let {
-      passwordChange,
-    } = this.props;
+  usernameChange (val){
+    const {
+      username,
+    } = this.state;
+    this.setState({username:val});
+  }
 
-    await passwordChange (val);
+  passwordChange  (val) {
+    this.setState({password:val});
   }
 
   render() {
-    let errType = {
-      title:undefined,
-      content:undefined,
-    };
-    if(this.props.errType){
-      errType = {
-        ...errType,
-        ...this.props.errType,
-      };
-    }
-    // log in with token and navigate to main screen 
-    console.log('render: ' + this.props.username);
-
-    // else navigate to login screen
     return (
-        <View style={styles.container}>
-          
-          <View style={styles.header}>
-            <Text style={styles.label}> Thớt </Text>
-          </View>
-          <View style={styles.body}>
-            <FLogin
-              onSubmitForm={this.formSubmitted}
-              onUsernameChange={this.usernameChange}
-              onPasswordChange={this.passwordChange}
-            />
-          </View>
-          <View style={styles.footer}>
-          <TouchableOpacity
-            style = {styles.button}
-            onPress = {this.onRegister} // to parent container
-          >
-            <Text
-              style = {styles.txtLogIn}
-            >
-              Đăng kí
-            </Text>
-        </TouchableOpacity>
-          </View>
+      <View style={styles.container}>
+        
+        <View style={styles.header}>
+          <Text style={styles.label}> Thớt </Text>
         </View>
+        <View style={styles.body}>
+          <FLogin
+            onSubmitForm={this.formSubmitted}
+            onUsernameChange={this.usernameChange}
+            onPasswordChange={this.passwordChange}
+          />
+        </View>
+        <View style={styles.footer}>
+        <TouchableOpacity
+          style = {styles.button}
+          onPress = {this.onRegister} // to parent container
+        >
+          <Text
+            style = {styles.txtLogIn}
+          >
+            Đăng kí
+          </Text>
+      </TouchableOpacity>
+        </View>
+      </View>
     );
   }
 }
@@ -181,7 +142,7 @@ class login extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 3,
-    backgroundColor: RED,
+    backgroundColor: 'white',
     // flexDirection: 'column'
   },
   header: {
@@ -194,7 +155,7 @@ const styles = StyleSheet.create({
   label: {
     fontFamily:FONT.uvfVerner,
     fontSize: 66,
-    color: 'white',
+    color: RED,
     // fontStyle: 'italic',
   },
   body: {
@@ -216,7 +177,7 @@ const styles = StyleSheet.create({
   txtLogIn: {
     fontSize: 20,
     textAlign: 'center',
-    color: 'white',
+    color: 'green',
   },
   btnLogIn: {
     flex: 1,
@@ -242,20 +203,14 @@ const mapStateToProps = (
 
   return {
     token: state.auth.token,
-    username: state.auth.username,
-    password: state.auth.password,
-    errType: state.auth.errType,
-    info: state.auth.info,
+    _id: state.auth._id,
   }
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  usernameChange: (username) => dispatch(inputUsername(username)),
-  passwordChange: (password) => dispatch(inputPassword(password)),
-  logInNoToken: (auth) => dispatch(logInNoToken(auth)),
-  logInWithToken: () => dispatch(logInWithToken()),
+  logInWithAuth: (auth,success,failed) => dispatch(logInWithAuth(auth,success,failed)),
+  // logInWithToken: (success,failed) => dispatch(logInWithToken(success,failed)),
   logOut: () => dispatch(logOut()),
-  getUserInfo: (token) => dispatch(getUserInfo(token))
 });
 
 export default connect(

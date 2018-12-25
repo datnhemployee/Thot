@@ -13,30 +13,9 @@ import {
 export default class LocalStorage {
   constructor () {}
 
-  static set props (val) {
-    return {
-      token: {
-        ...LocalStorage.props,
-        ...val,
-      }
-    }
-  }
-
-  static get props () {
-    return {
-      token: {
-        name: 'token',
-        value: String,
-      }
-    }
-  }
-
   static async getToken () {
     try{
-      let val = await AsyncStorage.getItem(
-        name,
-      );
-      this.props = {value: val};
+      let val = await AsyncStorage.getItem('token');
       return val;
     } catch(err){
       throw new Error(NO_LOCAL_TOKEN);
@@ -50,12 +29,9 @@ export default class LocalStorage {
         isString(value) &&
         !isEmpty(value)
       ) {
-        let {name} = this.props.token;
 
-        await AsyncStorage.removeItem(name);
-        await AsyncStorage.setItem(name,value);
-
-        LocalStorage.props.value = {value};
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.setItem('token',value);
     }
     else throw new Error(
       System_Message.setFailed

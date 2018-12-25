@@ -2,11 +2,6 @@ import ActionType from '../actions/actType';
 import Message from '../constant/message';
 
 const INITIAL_STATE = {
-  token: undefined,
-  // errType: undefined,
-  // username: undefined,
-  // password: undefined,
-  // info: undefined,
 }
 
 export default function (
@@ -27,82 +22,30 @@ export default function (
           return {
             ...state,
             ...{
-              token: action.payload,
-              errType: undefined,
+              ...action.payload,
             }
           }
-        } else {
-          return {
-            ...state,
-            ...{
-              errType: action.payload,
-            }
-          }
-        }
-    case ActionType.INPUT_USERNAME_CHANGES:
-      if(!action.error) {
-        console.log('recd: '+ JSON.stringify({
-          ...state,
-          ...{
-            username: action.payload,
-          }}));
-        return {
-          ...state,
-          ...{
-            username: action.payload,
-            errType: undefined,
-          }
-        }
-      } else {
-        return {
-          ...state,
-          ...{
-            errType: action.payload,
-          }
-        }
-      }
-    case ActionType.INPUT_PASSWORD_CHANGES:
+        } 
+    case ActionType.REGISTER:
     if(!action.error) {
-        return {
-          ...state,
-          ...{
-            password: action.payload,
-            errType: undefined,
-          }
-      }
-    } else {
       return {
         ...state,
         ...{
-          errType: action.payload,
+          ...action.payload,
         }
       }
-    }
+    } 
     case ActionType.GET_USER_INFO:
     if(!action.error) {
       return {
         ...state,
         ...{
-          info: action.payload,
-          errType: undefined,
+          ...action.payload,
         }
       }
-    } else {
-      return {
-        ...state,
-        ...{
-          errType: action.payload,
-        }
-      }
-    }
+    } 
     case ActionType.LOG_OUT:
-    // if(!action.error) {
-    //   return {
-    //     errType: undefined,
-    //   }
-    // } else {
       return {}
-    // }
     default:
       return {
         ...state,

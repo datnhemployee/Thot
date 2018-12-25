@@ -3,10 +3,10 @@ import register from '../sceen/src/register';
 import MainTabNavigator from './MainTabNavigator';
 
 import { 
-  createStackNavigator ,
+  createSwitchNavigator ,
 } from "react-navigation";
 
-export default RootStack = createStackNavigator({
+export default RootStack = createSwitchNavigator({
   Login: login,
   Home: MainTabNavigator,
   Register: register

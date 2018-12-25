@@ -25,28 +25,40 @@ import {
 import { connect } from 'react-redux';
 import TextInput from '../component/mTextInput';
 import {
-  inputUsername,
-  inputPassword,
-} from '../../actions/actLogin';
+  getDish_ByID,
+  logOut,
+} from '../../actions/actDishDetail';
 import FRecipe from '../form/fRecipe';
 
-export default class Recipe extends Component {
+class Recipe extends Component {
   constructor (props) {
     super (props);
   } 
 
+  async componentWillMount () {
+    const {
+      navigation,
+      getDish_ByID,
+    } = this.props;
+    await getDish_ByID(navigation.getParam('_id',''));
+  }
+
   render () {
     const {
-      navigation
+      navigation,
+      name,
+      ingredients,
+      intro,
+      steps,
     } = this.props;
 
     return (
       <View style={styles.container}>
         <FRecipe 
-         name={'csacsa'}
-         gredients={'casvasvsa'}
-         steps={['vsavasvas','vsavsavas']}
-         intro={'vasvasvasva'}
+         name={name}
+         ingredients={ingredients}
+         steps={steps}
+         intro={intro}
         navigation = {navigation}/>
       </View>
     );
@@ -58,3 +70,26 @@ const styles = StyleSheet.create({
     flex: 1,
   }
 });
+
+
+const mapStateToProps = (
+  state) => {
+   console.log('connect: ' + JSON.stringify(state));
+ 
+   return {
+    name: state.dishDetail.name,
+    ingredients: state.dishDetail.ingredients,
+    intro: state.dishDetail.intro,
+    steps: state.dishDetail.steps,
+   }
+ }
+ 
+ const mapDispatchToProps = (dispatch) => ({
+  getDish_ByID: (data) => dispatch(getDish_ByID(data)),
+  logOut: () => dispatch(logOut()),
+ });
+ 
+ export default connect(
+   mapStateToProps,
+   mapDispatchToProps,
+ )(Recipe);

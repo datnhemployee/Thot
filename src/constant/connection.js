@@ -31,6 +31,17 @@ class Connection {
   static get defPath () {
     return {
       logIn: 'LogIn',
+      register: 'Register',
+      dish: 'Dish',
+      getDishes: 'GetDishes',
+      addDish: 'AddDish',
+      like: 'Like',
+      dislike: 'Dislike',
+      Comment: 'Comment',
+      getComments: 'GetComments',
+      getInfo_ID: 'GetUserByID',
+      getInfo_NickName: 'GetUserByNickName',
+      getDish_ID: 'GetDishByID'
     }
   }
 

@@ -5,66 +5,48 @@ import {
   Text, 
   View, 
   TouchableOpacity,
-  Image
+  Image,
+  ToastAndroid,
 } from 'react-native';
 import {
   DEFAULT_PIC,
-  IconSaved,
-  IconNotSaved,
   IconLove,
   IconLoveClicked,
   IconChat,
   IconChatCliked,
 } from '../../constant/picture';
 import {
-  save,
-} from '../../actions/actPost'
-import Connection from '../../constant/connection'
-import {
   Avatar
 } from 'react-native-elements'
 import Button from './Button';
 import PictureHelper from '../../api/PictureHelper'
 import { SCREEN_SIZE, LIGHT_GRAY } from '../../constant/style';
+import {connect } from 'react-redux';
+import { like, dislike } from '../../actions/actDish';
 
 const pic = require('../../img/default_pic.png')
 
-export default class PostDish extends Component{
+class PostDish extends Component{
   constructor (props) {
     super(props)
 
     this.getAvartar = this.getAvartar.bind(this);
     this.getDishPicture = this.getDishPicture.bind(this);
     this.getLike = this.getLike.bind(this);
-    this.getComment = this.getComment.bind(this);
-    this.getSave = this.getSave.bind(this);
     this.onLikePress = this.onLikePress.bind(this);
     this.onCommentPress = this.onCommentPress.bind(this);
-    this.onSavePress = this.onSavePress.bind(this);
 
     this.state = {
       isLike: this.props.dish.isLike,
-      isComment: this.props.dish.isComment,
-      isSave: this.props.dish.isSave,
     }
   }
   
   async getAvartar () {
-    const {
-      dish,
-    } = this.props;
-
-    return dish.pic;
-    // return await PictureHelper.get(dish.author.avatar);
+    return pic;
   }
 
   async getDishPicture () {
-    const {
-      dish,
-    } = this.props;
-
-    return dish.pic;
-    // return await PictureHelper.get(dish.picture);
+    return pic;
   }
 
   getLike () {
@@ -77,47 +59,60 @@ export default class PostDish extends Component{
   }
 
   getComment () {
-    const {
-      isComment,
-    } = this.state;
-    if(isComment)
-      return <IconChatCliked /> 
     return <IconChat/>
   }
   
-  getSave () {
-    const {
-      isSave,
-    } = this.state;
-    if(isSave)
-      return <IconSaved /> 
-    return <IconNotSaved/>
-  }
-
   onCommentPress () {
     const {
-      isComment
-    } = this.state;
-    const {
-      navigation
+      navigation,
+      dish,
     } = this.props;
-    let val = !isComment;
-    this.setState({isComment:val})
-    navigation.navigate('Comment');
+    navigation.navigate('Comment',{postID:dish._id});
   }
-  onLikePress () {
+
+  async onLikePress () {
     const {
       isLike
     } = this.state;
-    let val = !isLike;
-    this.setState({isLike:val})
-  }
-  onSavePress () {
-    const {
-      isSave
-    } = this.state;
-    let val = !isSave;
-    this.setState({isSave:val})
+
+    let {
+      onLikePress,
+      dish,
+      user,
+      like,
+      dislike,
+    } = this.props;
+    console.log('like',JSON.stringify(dish));
+    console.log('like',JSON.stringify(user));
+
+    if(!isLike){
+      await like({
+        _id: user,
+        postID: dish._id,
+      },
+      ()=>{
+        let val = !isLike;
+        this.setState({isLike:val})
+        onLikePress();
+      },
+      ()=>{
+        ToastAndroid.show('Cơ sở dữ liệu bị lỗi.');
+      }
+      );
+    }
+    else {
+      await dislike({
+        _id: user,
+        postID: dish._id,
+      },()=>{
+        let val = !isLike;
+        this.setState({isLike:val})
+        onLikePress();
+      },
+      ()=>{
+        ToastAndroid.show('Cơ sở dữ liệu bị lỗi.');
+      });
+    }
   }
 
   render () {
@@ -125,7 +120,7 @@ export default class PostDish extends Component{
       dish,
       navigation,
     } = this.props;
-    console.log('navigation: '+ JSON.stringify(navigation))
+    console.log('navigation: '+ JSON.stringify(dish))
 
     let avatar =  this.getAvartar();
     let picture =  this.getDishPicture();
@@ -133,24 +128,21 @@ export default class PostDish extends Component{
     return (
       <View style={{backgroundColor:'white',marginTop: 5,paddingTop: 5,paddingBottom: 5}}>
         <View style={{flexDirection: 'row'}}>
-          <Avatar
+          <TouchableOpacity
+            onPress={() => {navigation.navigate('User',{nickName:dish.author})}}>
+          {/* <Avatar
             size="small"
             rounded
             source={avatar}
-            onPress={() => {navigation.navigate('UserDetail',{author:dish.author.id})}}
+            
             activeOpacity={0.7}
-          />
-          <Text style={{margin: 5,alignContent:'center'}}>{dish.author.name}</Text>
-          <Button 
-            flex = {1}
-            customIcon = {this.getSave()}
-            onPress = {this.onSavePress}
-            justifyContent = {'flex-end'}
-            alignItems = {'center'}
-          />
+          /> */}
+            <Text style={{margin: 5,alignContent:'center',fontSize: 20}}> @{dish.author}</Text>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity 
-          onPress={()=>{navigation.navigate('Recipe')}}>
+          onPress={()=>{navigation.navigate('Recipe',{_id:dish._id})}}>
+          <Text style={{marginLeft: 5,fontSize: 30}}> {dish.name}</Text>
           <Image 
             style={{flex:1,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,resizeMode: 'contain'}}
             source={pic}
@@ -180,3 +172,24 @@ export default class PostDish extends Component{
     );
   }
 }
+
+const mapStateToProps = (
+  state) => {
+   return {
+    list: state.dish.list, 
+    token: state.auth.token, 
+    user: state.auth._id, 
+   }
+  
+ }
+ 
+ const mapDispatchToProps = (dispatch) => ({
+    like: (data,success,failed) => dispatch(like(data,success,failed)),
+    dislike: (data,success,failed) => dispatch(dislike(data,success,failed)),
+    logOut: () => dispatch(logOut()),
+ });
+ 
+ export default connect(
+   mapStateToProps,
+   mapDispatchToProps,
+ )(PostDish);

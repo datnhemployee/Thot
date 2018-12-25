@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {
   DEFAULT_PIC,
-  IconSaved,
+  IconAdd,
   IconNotSaved,
 } from '../../constant/picture';
 import MInputText from './mTextInput';
@@ -68,21 +68,25 @@ export default class RecipeList extends Component {
           data={listElement}
           renderItem={({item,index})=>this.renderElement(item,index)}
           refreshing={refresh}
+          keyExtractor={(item,index)=>'IdontKnow'+index}
         />
-        <View>
+        <View style={{flexDirection:'row'}}>
           <TextInput
             style = {{
-              flex: 0.1,
+              flex: 2,
             }}
             name={"add"}
+            multiline={true}
             placeholder={addPlaceHolder}
             onChangeText={onAddChanged}
             sercure={false}
           />
           <Button 
-          flex = {1}
-          customIcon={IconSaved()}
+          flex = {2}
+          customIcon={IconAdd()}
           onPress={onAddPress}
+          justifyContent={'flex-end'}
+          alignItems={'center'}
           />
         </View>
       </View>

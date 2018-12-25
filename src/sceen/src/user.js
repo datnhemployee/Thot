@@ -42,6 +42,9 @@ import {
   IconCamera,
   IconPicture,
 } from '../../constant/picture'
+import {
+  getUserInfo_nickName,
+} from '../../actions/actUser'
 
 const img = 'https://images.pexels.com/photos/371633/pexels-photo-371633.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500';
 
@@ -62,13 +65,9 @@ const createFormData = (photo, body) => {
   return data
 }
 
-export default class User extends Component {
+class User extends Component {
   constructor (props) {
     super (props);
-
-    this.getImage = this.getImage.bind(this);
-    this.snap = this.snap.bind(this);
-    this.send = this.send.bind(this);
 
     this.state = {
       photo:{
@@ -77,60 +76,14 @@ export default class User extends Component {
     }
   }
 
-
-  async send () {
-
-    const res = await axios.get('http://192.168.56.1:8000/');
-    const config = {
-      onUploadProgress: function(progressEvent) {
-
-        var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total )
-  
-        console.log(percentCompleted)
-  
-      }
-    }
-    console.log(res.data);
-
-    if(this.state.photo.uri === img)
-      alert('No image has been found.')
-    else{
-      await axios.post('http://192.168.56.1:8000/Upload',
-        createFormData(this.state.photo, {}),
-        config)
-    }
-    
-
-  }
-  
-  async getImage () {
+  async componentWillMount () {
     const {
-      img,
+      navigation,
+      getUserInfo_nickName,
     } = this.props;
-
-      const options = {
-        noData: true,
-      }
-      ImagePicker.launchImageLibrary(options, response => {
-        if (response.uri) {
-          this.setState({ photo: response })
-        }
-      })
-  }
-
-  async snap () {
-    const {
-      img,
-    } = this.props;
-
-      const options = {
-        noData: true,
-      }
-      ImagePicker.launchCamera(options, response => {
-        if (response.uri) {
-          this.setState({ photo: response })
-        }
-      })
+    console.log('User nè: ',JSON.stringify(navigation));
+    const nickName = navigation.getParam('nickName','');
+    await getUserInfo_nickName(nickName);
   }
 
   getPhoto () {
@@ -143,80 +96,17 @@ export default class User extends Component {
 
   render () {
     let {
-      /**
-       * @var {function} this.props.onUsernameChange 
-       * @description Change the state `username` when 
-       *              user type in the `field username`.
-       * @return void
-       * @see login {./screen/src/}
-       */
-      onUsernameChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onPasswordChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onConfirmPasswordChanged,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onEmailChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onNickNameChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onPhoneNumberChange,
-
-      /**
-       * @var {function} this.props.onPasswordChange 
-       * @description Change the state `password` when 
-       *              user type in the `field password`.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      onAddressChange,
-
-      /**
-       * @var {function} this.props.onSubmitForm 
-       * @description to get `token` and `user info`  
-       *              from server.
-       * @return void
-       * @see login.js {./screen/src/}
-       */
-      getImage,
-
+      _id,
+      email,
+      nickName,
+      phone,
+      address,
     } = this.props;
 
+    console.log('blallal: ',email,
+      nickName,
+      phone,
+      address,);
     let {
       // keyboardAvoidingViewKey,
     } = this.state;
@@ -239,50 +129,21 @@ export default class User extends Component {
             source={this.getPhoto()}
           />
           <View style={styles.container}>
-          <Button 
-            flex = {1}
-            customIcon={IconPicture()}
-            customValue={'Từ thư viện'}
-            txtStyle={{
-              fontFamily:FONT.segoeUIL,
-              color: RED,}}
-            onPress={this.getImage}
-            />
-          <Button 
-            flex = {1}
-            customIcon={IconCamera()}
-            customValue={'Chụp Ảnh'}
-            txtStyle={{
-              fontFamily:FONT.segoeUIL,
-              color: RED,}}
-            onPress={this.snap}
-            />
-          <TouchableOpacity
-              style = {styles.button}
-              onPress = {this.makeFriend} // to parent container
-            >
-              <Text
-                style = {styles.txtLogIn}
-              >
-                Kết bạn
-              </Text>
-          </TouchableOpacity>
+            <Text style={styles.lable}> #Tên:</Text>
+            <Text style={styles.content}> {nickName}</Text>
           </View>
-          <Text>{name}</Text>
-          <Text>{email}</Text>
-          <Text>{address}</Text>
-          <Text>{email}</Text>
-           
-          <TextInput
-            style = {{
-              flex: 0.1,
-            }}
-            name={"email"}
-            placeholder={"Email"}
-            editable={false}
-            value={email}
-            sercure={phone}
-          />
+          <View style={styles.container}>
+            <Text style={styles.lable}> #Email:</Text>
+            <Text style={styles.content}> {email}</Text>
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.lable}> #Địa chỉ:</Text>
+            <Text style={styles.content}> {address}</Text>
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.lable}> #Điện Thoại:</Text>
+            <Text style={styles.content}> {phone}</Text>
+          </View>
           <View style={{ height: 60 }} />
         </ScrollView>
       </KeyboardAvoidingView>
@@ -293,11 +154,39 @@ export default class User extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    // paddingVertical: 20
-    // flex: 1
+    flexDirection:'row',
+    flex: 1,
   },
-  txtLogIn: {
+  lable: {
     fontFamily: FONT.segoeUIL,
-    color: 'black'
+    color: 'black',
+    fontSize: 20,
+  },
+  content: {
+    fontFamily: FONT.segoeUIL,
+    color: 'black',
+    fontSize: 20,
   }
 });
+
+const mapStateToProps = (
+  state) => {
+   console.log('connect: ' + JSON.stringify(state));
+   return {
+    _id: state.user._id,
+    email: state.user.email,
+    nickName: state.user.nickName,
+    phone: state.user.phone,
+    address: state.user.address,
+   }
+ }
+ 
+ const mapDispatchToProps = (dispatch) => ({
+  getUserInfo_nickName: (data) => dispatch(getUserInfo_nickName(data)),
+  logOut: () => dispatch(logOut()),
+ });
+ 
+ export default connect(
+   mapStateToProps,
+   mapDispatchToProps,
+ )(User);

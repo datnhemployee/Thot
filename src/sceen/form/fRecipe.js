@@ -70,23 +70,11 @@ export default class fRecipe extends Component {
   constructor (props) {
     super (props);
 
-    const {
-      isLike,
-    } = this.props;
-
-    this.state = {
-      isLike
-    }
-
     this.onCommentPress = this.onCommentPress.bind(this);
-    this.onLikePress = this.onLikePress.bind(this);
+    // this.onLikePress = this.onLikePress.bind(this);
   }
 
   getPhoto () {
-    console.log('photo :'+ JSON.stringify(this.state.photo))
-    let photo = this.state.photo;
-    if(photo)
-      return {uri: photo.uri};
     return {uri: img};
   }
 
@@ -106,13 +94,13 @@ export default class fRecipe extends Component {
     navigation.navigate('Comment')
   }
 
-  onLikePress () {
-    const {
-      isLike
-    } = this.state;
-    const temp = !isLike
-    this.setState({isLike:temp});
-  }
+  // onLikePress () {
+  //   const {
+  //     isLike
+  //   } = this.state;
+  //   const temp = !isLike
+  //   this.setState({isLike:temp});
+  // }
 
   renderElement (item,index) {
     return (
@@ -131,24 +119,12 @@ export default class fRecipe extends Component {
 
   render () {
     let {
-      /**
-       * @var {function} this.props.onUsernameChange 
-       * @description Change the state `username` when 
-       *              user type in the `field username`.
-       * @return void
-       * @see login {./screen/src/}
-       */
-      onUsernameChange,
-
       name,
-      gredients,
+      ingredients,
       steps,
       intro,
     } = this.props;
 
-    let {
-      listRecipe,
-    } = this.state;
     return (
         <View 
         style={{flex:1}}
@@ -161,37 +137,41 @@ export default class fRecipe extends Component {
         <ScrollView 
           // style={{flex:1}}
           >
-          <TextInput
-            style = {{
+
+          <Text style = {{
               flex: 0.1,
-            }}
-            name={"Dish"}
-            placeholder={"Tên món ăn"}
-            value={name}
-            onChangeText={()=>{}}
-            editable={false}
-            sercure={false}
-          />
+              fontSize: 18,
+            }}>#Món</Text>
+          <Text style = {{
+              flex: 0.1,
+              fontSize: 25,
+            }}>{name}</Text>
           <Image
             style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,resizeMode: 'contain'}}
             source={this.getPhoto()}
           />
           
-          <View style={styles.container}>
-            <TextInput
-              style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}
-              multiline={true}
-              value={intro}
-              editable={false}
-              placeholder={'Chưa có giới thiệu'}
-            />
-            <TextInput
-              style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}
-              multiline={true}
-              value={gredients}
-              editable={false}
-              placeholder={'Chưa có nguyên liệu'}
-            />
+          <View style={[styles.container,{flexWrap: 'wrap'}]}>
+            <Text style = {{
+              flex: 0.1,
+              fontSize: 18,
+            }}>#Đôi nét mô tả</Text>
+            <Text
+              style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}>
+              {intro}
+              </Text>
+            <Text style = {{
+              flex: 0.1,
+              fontSize: 18,
+            }}>#Nguyên liệu gồm: </Text>
+            <Text
+              style={{flex:7,width:SCREEN_SIZE.W,height:SCREEN_SIZE.H/3,}}>
+              {ingredients}
+              </Text>
+            <Text style = {{
+              flex: 0.1,
+              fontSize: 18,
+            }}>#Công thức chế biến</Text>
             <FlatList 
               style={styles} 
               data={steps}
@@ -199,20 +179,20 @@ export default class fRecipe extends Component {
               refreshing={true}
             />
             <View style={{flexDirection:'row',borderTopColor: LIGHT_GRAY,borderTopWidth: 1,}}>
-              <Button 
+              {/* <Button 
                 flex = {1}
                 customIcon = {this.getLike()}
                 onPress = {this.onLikePress}
                 justifyContent = {'center'}
                 alignItems = {'center'}
-              />
-              <Button 
+              /> */}
+              {/* <Button 
                 flex = {1}
                 customIcon = {IconChat()}
                 onPress = {this.onCommentPress}
                 justifyContent = {'center'}
                 alignItems = {'center'}
-              />
+              /> */}
             </View>
             <View style={{ height: 60 }} />
           </View>

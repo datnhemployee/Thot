@@ -100,8 +100,7 @@ export default class MainHeader extends Component {
   render () {
     return (
       <View style={styles.container}>
-        <View style={[this.getBottomBorderHome(),
-        {borderWidth: 1,flex:1}]}>
+        <View style={[this.getBottomBorderHome(),{flex:1}]}>
             <Button 
               flex = {1}
               customIcon = {this.getIconHome()}
@@ -110,8 +109,7 @@ export default class MainHeader extends Component {
               alignItems = {'center'}
             />
         </View>
-        <View style={[this.getBottomBorderNote(),
-        {borderWidth: 1,flex:1}]}>
+        <View style={[this.getBottomBorderNote(),{flex:1}]}>
           <Button 
             flex = {1}
             customIcon = {this.getIconNote()}

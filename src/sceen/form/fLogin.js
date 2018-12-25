@@ -110,8 +110,9 @@ const styles = StyleSheet.create({
   //   flex: 0.1,
   // },
   txtLogIn: {
+    fontSize: 20,
     fontFamily: FONT.segoeUIL,
-    color: 'white'
+    color: RED
   }
 });
 

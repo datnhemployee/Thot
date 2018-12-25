@@ -34,22 +34,17 @@ export default class Comment extends Component {
   constructor (props) {
     super (props);
 
-    this.state = {
-      Comments: [{author:'Dat',content:'vsavasv'},{author:'dsa',content:'vsavasv'}],
-    }
   } 
 
   render () {
     const {
       navigation
     } = this.props;
-    const {
-      Comments
-    } = this.state;
+    const postID = navigation.getParam('postID');
     return (
       <View style={styles.container}>
         <FComment 
-        comments = {Comments}
+        postID = {postID}
         navigation = {navigation}/>
       </View>
     );

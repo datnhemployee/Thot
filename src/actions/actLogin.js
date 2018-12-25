@@ -1,15 +1,42 @@
 import ActionType from './actType';
 import { token } from '../constant/connection';
-import axios from 'axios';
-import Connection from '../constant/connection';
 import UserManager from '../api/UserManager';
-import ErrorType from '../constant/ErrorType'
+import LocalStore from '../store/local';
 
-const logInNoToken = (
-    auth
-) => async (
-  dispatch
-) =>{
+const register = (data,success,failed) => async (dispatch) =>{
+  try{
+    
+    const res = await UserManager.register(data); 
+    console.log('res: '+ JSON.stringify(res));
+    if(!res.data.error){
+      dispatch({
+        type: ActionType.REGISTER,
+        payload: {
+          ...data,
+          ...{
+            token: res.data.token,
+            _id: res.data._id,
+          },
+        },
+      }); 
+      success('Đăng kí thành công');
+    } else {
+      dispatch({
+        type: ActionType.REGISTER,
+        error: true,
+      }); 
+      failed(res.data.error);
+    }
+  }catch (err) {
+    dispatch({
+      type: ActionType.REGISTER,
+      error: true,
+    }); 
+    failed('Không thể kết nối server');
+  }
+}
+
+const logInWithAuth = (auth,success,failed) => async (dispatch) =>{
   try{
     let {
     username, 
@@ -17,90 +44,61 @@ const logInNoToken = (
     } = auth;
     console.log('here: ' + JSON.stringify(auth));
     console.log('here: ' + username);
-    let token = await UserManager.getTokenFromDB(
+    let res = await UserManager.logInWithAuth(
       username,
       password
     );
-    console.log('token: '+ JSON.stringify(token));
-    if(token.length != 0){
+    console.log('res: '+ JSON.stringify(res));
+    if(!res.data.error){
       dispatch({
         type: ActionType.LOGING_IN_NO_TOKEN,
-        payload: token,
-          /** ISSUE 
-           * @name WRONG_ACTION
-           * @template NOT_RELEVANT_STATE_FOR_ACTION  
-           * @example 
-           *  ...
-           *  isPopUp: true,
-           *  alert: notification.LogInSuc_Tile,
-           *  alertContent: notification.LogInSuc,
-           *  ...
-           * @see issue.js 
-           */
+        payload: {
+          token: res.data.token,
+          _id: res.data._id,
+        }
       });
-      
+      // LocalStore.setToken(token);
+      success('Đăng nhập thành công');
     } else {
       await dispatch({
         type: ActionType.LOGING_IN_NO_TOKEN,
-        payload: ErrorType.Client.LogIn,
         error: true,
       });
-
-      /** ISSUE 
-       * @name WRONG_ACTION
-       * @template NO_NEED_VARIABLES_FOR_EXCEPTION  
-       * @example 
-       *  ...
-       *  scienarios: scienarios.SUCCESSFULL,
-       *  ...
-       * @see issue.js 
-       * }
-       */
-
-      /** ISSUE 
-       * @name WRONG_STATE
-       * @template NOT_RELEVANT_STATE_FOR_ACTION  
-       * @example 
-       *  ...
-       *  isPopUp: true,
-       *  alert: notification.LogInSuc_Tile,
-       *  alertContent: notification.LogInSuc,
-       *  ...
-       * @see issue.js 
-       * }
-       */
+      failed(res.data.error);
     }
   } catch (err) {
       await dispatch({
         type: ActionType.LOGING_IN_NO_TOKEN,
-        payload: ErrorType.Server.LogIn,
         error: true,
       }); 
-      console.log(err);
+    failed('Không thể kết nối server');
   }
 }
 
-const logInWithToken = () => async (dispatch) =>{
+const logInWithToken = (success,failed) => async (dispatch) =>{
   try{
-    let token = await UserManager.getTokenFromLocal();
-    if(token){
+    let result = await UserManager.logInWithToken();
+    if(!result.data.error){
       dispatch({
         type: ActionType.LOGING_IN_WITH_TOKEN,
-        payload:token,
+        payload:{
+          ...result,
+        },
       });
+      success(result.data);
     } else {
       await dispatch({
         type: ActionType.LOGING_IN_WITH_TOKEN,
-        payload: ErrorType.Client.LogIn,
         error: true,
       });
+      failed(result.data.error);
     }
   } catch (err) {
     await dispatch({
       type: ActionType.LOGING_IN_WITH_TOKEN,
-      payload:  ErrorType.Server.LogIn,
       error: true,
     }); 
+    failed('Không thể kết nối server');
   }
 }
 
@@ -108,61 +106,9 @@ const logOut = () => async (dispatch) => {
   dispatch({type: ActionType.LOG_OUT});
 }
 
-const inputLogInChange = (
-  InputLogInType, 
-  value) => async (dispatch) => {
-  //check type of input
-  
-  console.log('inputLogInChange: '+ value);
-  await dispatch({
-    type: InputLogInType,
-    payload: value,
-  });
-}
-
-const inputUsername = (username) => inputLogInChange (
-  ActionType.INPUT_USERNAME_CHANGES,
-  username);
-
-const inputPassword = (password) => inputLogInChange (
-  ActionType.INPUT_PASSWORD_CHANGES,
-  password);
-
-const getUserInfo = (token) => async (dispatch) => {
-  try{
-    let info = await UserManager.getUserInfo(token);
-    if(info){
-        dispatch({
-          type: ActionType.GET_USER_INFO,
-          payload: {
-            info: info,
-          }
-        });
-      } else {
-        dispatch({
-          type: ActionType.GET_USER_INFO,
-          payload: {
-            errType: ErrorType.Client.WrongToken,
-          },
-          error: true,
-        });
-      }
-  } catch (err) {
-      await dispatch({
-        type: ActionType.GET_USER_INFO,
-        payload: {
-          errType: ErrorType.Server.LogIn,
-        },
-        error: true,
-      }); 
-  }
-}
-
 export {
-  logInNoToken,
+  logInWithAuth,
   logInWithToken,
-  inputUsername,
-  inputPassword,
-  getUserInfo,
   logOut,
+  register,
 };

@@ -53,7 +53,7 @@ export default class textInput extends Component {
         // name={this.props.content.name}
         name={this.props.name}
         placeholder={this.props.placeholder}
-        placeholderTextColor= {LIGHT_GRAY}
+        placeholderTextColor= {GRAY}
         secureTextEntry={this.props.sercure}
         onChangeText={this.props.onChangeText}
         // editable = {true}
@@ -61,7 +61,7 @@ export default class textInput extends Component {
         autoFocus = {true}
         keyboardAppearance = 'dark'
         keyboardType =  {this.getKeboardType()}
-        underlineColorAndroid={'lightgray'}
+        underlineColorAndroid={GRAY}
         >
         
       </TextInput>

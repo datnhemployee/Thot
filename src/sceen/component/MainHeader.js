@@ -61,19 +61,21 @@ export default class MainHeader extends Component {
     const {
       navigation,
     } = this.props;
-    navigation.navigate('AddRecipe');
+    const _id = navigation.getParam('_id','');
+    const token = navigation.getParam('token','');
+    navigation.navigate('AddRecipe',{_id,token});
   }
 
   render () {
     return (
       <View style={styles.container}>
-          <Button 
+          {/* <Button 
             flex = {1}
             customIcon = {this.getIconHome()}
             onPress = {this.onImagePress}
             justifyContent = {'center'}
             alignItems = {'center'}
-          />
+          /> */}
         
         <View style={styles.header}>
             <Text style={styles.label}> Thớt </Text>
@@ -82,7 +84,7 @@ export default class MainHeader extends Component {
           flex = {1}
           customIcon = {<IconAdd/>}
           onPress = {this.onAddCliked}
-          justifyContent = {'center'}
+          justifyContent = {'flex-end'}
           alignItems = {'center'}
         />
       </View>
@@ -98,6 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
+    textAlign : 'center',
     fontFamily:FONT.uvfVerner,
     fontSize: 44,
     color: RED,

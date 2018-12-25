@@ -8,8 +8,8 @@ import {
   LOG_IN_WITH_AUTH,
   LOG_IN_WITH_TOKEN,
   REGISTER,
-  GET_INFO_FROM_DATABASE,
-
+  GET_USER_INFO_ID,
+  GET_USER_INFO_NICKNAME
 } from '../constant/HttpRequest';
 import axios from 'axios';
 import LocalStorage from '../store/local';
@@ -17,26 +17,91 @@ import LocalStorage from '../store/local';
 export default class UserManager {
   constructor () {}
 
+  static async getUserInfo_ID (ID) {
+    let url = GET_USER_INFO_ID.URL;
+    let timeout = GET_USER_INFO_ID.TIME_OUT;
+    let request = GET_USER_INFO_ID.REQUEST;
+
+    return res = await axios.post(
+      url,{
+        ID,
+      },{
+        timeout: timeout,
+        headers: {
+          request: request,
+        },
+    });
+  }
+
+  static async getUserInfo_nickName (nickName) {
+    let url = GET_USER_INFO_NICKNAME.URL;
+    let timeout = GET_USER_INFO_NICKNAME.TIME_OUT;
+    let request = GET_USER_INFO_NICKNAME.REQUEST;
+
+    return res = await axios.post(
+      url,{
+        nickName,
+      },{
+        timeout: timeout,
+        headers: {
+          request: request,
+        },
+    });
+  }
+
   static async getToken () {
     try{
       if(!this.isRelevantToken()) {
-        token = await this.getTokenFromLocal();
+        token = await this.logInWithToken();
       }  
       if(!this.isRelevantToken()) {
-        token = await this.getTokenFromDB();
+        token = await this.logInWithAuth();
       }
       throw new Error(ErrorType.WRONG_AUTH_TO_GET_TOKEN);
     } catch (err) {
       throw new Error(err);
     }
   }
-  static async getUserInfo (token) {
-    try{
-      let url = GET_INFO_FROM_DATABASE.URL;
-      let timeout = GET_INFO_FROM_DATABASE.TIME_OUT;
-      let request = GET_INFO_FROM_DATABASE.REQUEST;
 
-      let res = await axios.post( 
+  /**
+     * @returns { Object || Object } 
+     * {
+     *  _id: (gởi đi trong mỗi lần truy cập để biết người dùng),
+     *  token: (
+     *    + Gởi đi trong mỗi lần truy cập để biết người dùng
+     *    + Lưu vào trong Async Storage để đăng nhập lần sau
+     *  ),
+     * }
+     * ||
+     * {
+     *  error: {String }(thông tin chi tiết)
+     * }
+     */
+  static async register (data) {
+    let url = REGISTER.URL;
+    let timeout = REGISTER.TIME_OUT;
+    let request = REGISTER.REQUEST;
+
+    return res = await axios.post(
+      url,{
+        ...data,
+      },{
+        timeout: timeout,
+        headers: {
+          request: request,
+        },
+    });
+  }
+
+  static async logInWithToken () {
+      let token = await LocalStorage.getToken();
+    
+      console.log('token: '+ token)
+      let url = LOG_IN_WITH_TOKEN.URL;
+      let timeout = LOG_IN_WITH_TOKEN.TIME_OUT;
+      let request = LOG_IN_WITH_TOKEN.REQUEST;
+
+      return res = await axios.post(
         url,{
           token: token,
         },{
@@ -45,72 +110,35 @@ export default class UserManager {
             request: request,
           },
       });
-  
-      if(res.data){
-        return res.data.info;
-      } 
-  
-      throw new Error(ErrorType.NO_RESPONSE);
-
-    } catch (err) {
-      throw new Error(err);
-    }
   }
 
-  static async getTokenFromLocal () {
-    try{
-      let token = await LocalStorage.getToken();
-    
-      if(isString(token) &&
-        !isEmpty(token)){
-        return token;
-      } 
-    } catch (err) {
-      // console.log(/**error */);
-    }
-  }
-
-  static async getTokenFromDB (
+  static async logInWithAuth (
       username,
       password,
     ) {
       // Có thể kiểm tra sai chỗ này
-    if(!this.isRelevantUsername(username) ||
-    !this.isRelevantPassword(password))
-      throw new Error(
-        ErrorType.WRONG_TYPE_USERNAME_OR_PASSWORD
-      );
+    // if(!this.isRelevantUsername(username) ||
+    // !this.isRelevantPassword(password))
+    //   throw new Error(
+    //     ErrorType.WRONG_TYPE_USERNAME_OR_PASSWORD
+    //   );
 
-    let url = REGISTER.URL;
-    let timeout = REGISTER.TIME_OUT;
-    let request = REGISTER.REQUEST;
+    let url = LOG_IN_WITH_AUTH.URL;
+    let timeout = LOG_IN_WITH_AUTH.TIME_OUT;
+    let request = LOG_IN_WITH_AUTH.REQUEST;
 
-    // 'http://192.168.56.1:8000/LogIn'
-    console.log('url: '+ url);
-    // Check Username & password
-    let res = await axios.post( 
+    return await axios.post( 
       url,{
         auth: {
           username: username,
           password: password,
         },
-        nickName: 'Dat huu',
       },{
         timeout: timeout,
         headers: {
           request: request,
         },
     });
-    console.log('res: '+ JSON.stringify(res.data));
-
-    if(res.data){
-      token = res.data.token;
-
-      await LocalStorage.setToken(token);
-      return token;
-    } 
-
-    throw new Error(ErrorType.NO_RESPONSE);
   }
 
   static isRelevantInfo () {

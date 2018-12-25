@@ -2,8 +2,6 @@ import ActionType from '../actions/actType';
 import Message from '../constant/message';
 
 const INITIAL_STATE = {
-  list: [],
-  save: [],
 }
 
 export default function (
@@ -16,7 +14,7 @@ export default function (
     console.log('===============================');
     
     switch (action.type) {
-    case ActionType.GET_DISHES:
+    case ActionType.GET_DISH_ID:
     if(!action.error) {
       return {
         ...action.payload,
